@@ -32,7 +32,13 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
  foot:["Нитка — інструмент для самопізнання, твій помічник у роботі з психотерапевтом.","Дані тільки на цьому пристрої."],
- close:"Закрити",privacyL:"Конфіденційність",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
+ close:"Закрити",privacyL:"Конфіденційність",howL:"Як це працює",
+ introH:"Знайди, що для тебе по-справжньому важливо",
+ introP:"Цінності — це те, що для тебе важливо в житті: свобода, близькі, чесність, спокій. Вони тихо керують твоїми рішеннями, навіть коли ти про них не думаєш. «Нитка» допомагає їх назвати й побачити, чи живеш ти відповідно до них.",
+ introSteps:[["192 картки","На кожній — цінність, що вона означає, як проявляється в житті, і питання до себе."],["Сортуй","Для кожної картки обери «Моє», «Можливо» або «Ні». Довіряй першому відгуку."],["Звузь до 12","З того, що позначив «Моє», залиш 12, а з них — 5 найголовніших."],["Поглиб","Запиши, що цінність значить для тебе, і оціни: наскільки вона важлива і як ти живеш зараз."]],
+ introRules:["Правильних і неправильних відповідей немає.","Сортування займає приблизно 20–30 хвилин. Можна робити частинами, усе зберігається.","Твої записи лишаються тільки на цьому пристрої."],
+ introNote:"«Нитка» — помічник у роботі з психотерапевтом, а не заміна терапії.",
+ introGo:"Почати сортування",introCont:"Продовжити",introBrowse:"Подивитися всі цінності",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
 en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  eyebrow:"192 values · Ukrainian and English",h1:"Find your <em>12</em> core values",
  lead:"Go through every value one card at a time, explore the ones that resonate, and narrow down to what matters most. Works on your own or alongside a therapist.",
@@ -59,7 +65,13 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
  foot:["Nytka is a tool for self-discovery — your companion in working with a psychotherapist.","Data stays on this device."],
- close:"Close",privacyL:"Privacy",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
+ close:"Close",privacyL:"Privacy",howL:"How it works",
+ introH:"Find what truly matters to you",
+ introP:"Values are what matters to you in life: freedom, the people close to you, honesty, calm. They quietly steer your decisions, even when you don't think about them. Nytka helps you name them and see whether you live by them.",
+ introSteps:[["192 cards","Each one has a value, what it means, how it shows up in life, and a question for yourself."],["Sort","For each card choose “Mine”, “Maybe” or “No”. Trust your first response."],["Narrow to 12","From what you marked “Mine”, keep 12, and from those, your top 5."],["Go deeper","Write what the value means to you and rate how important it is and how you live by it now."]],
+ introRules:["There are no right or wrong answers.","Sorting takes about 20–30 minutes. You can do it in parts; everything is saved.","Your entries stay only on this device."],
+ introNote:"Nytka is a companion for your work with a psychotherapist, not a substitute for therapy.",
+ introGo:"Start sorting",introCont:"Continue",introBrowse:"Browse all values",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
 };
 const COL={freedom:"red",courage:"ochre",achieve:"plum",mastery:"indigo",mind:"teal",order:"green",integrity:"indigo",justice:"plum",security:"green",calm:"teal",joy:"ochre",people:"red"};
 
@@ -126,7 +138,7 @@ function sign(v,cls,stitch){
 const IC={
  sort:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M7 4h10"/></svg>',
  lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
- mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l14 14M19 5L5 19"/></svg>',
+ mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0112 7.4 4.3 4.3 0 0119.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-6 8 6v9H4z"/></svg>',
  star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>',
  lock:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>'
@@ -146,7 +158,7 @@ function shell(){
   $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${IC[k]}<span>${esc(l)}${k==="mine"&&c[2]?` <span class="badge">${c[2]}</span>`:""}</span></button>`).join("");
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
-function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();(({home:home,sort:sort,lib:lib,mine:mine})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
+function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();document.documentElement.classList.toggle("intro-mode",v==="intro");(({home:home,sort:sort,lib:lib,mine:mine,intro:intro})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -170,7 +182,22 @@ function home(){
   ${done?`<div class="stat-row">${[2,1,3].map(k=>`<span class="pill"><i style="background:var(--${k===2?"mine":k===1?"maybe":"no"})"></i>${esc(t("st")[k])} ${c[k]}</span>`).join("")}</div>`:""}
   ${foot()}`;
 }
-const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a></span></footer>`;
+const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><button class="flink" data-go="intro">${esc(t("howL"))}</button><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a></span></footer>`;
+
+/* ---------- intro: what Nytka is and how it works ---------- */
+function intro(){
+  const started=TOTAL-counts()[0]>0;
+  $("#view").innerHTML=`<section class="intro">
+    <div class="intro-logo">${sign({e:"Nytka",c:"freedom"},"",true)}<span>${esc(t("brand"))}</span></div>
+    <h1>${esc(t("introH"))}</h1>
+    <p class="intro-lead">${esc(t("introP"))}</p>
+    <ol class="isteps">${t("introSteps").map((s,i)=>`<li><span class="in">${i+1}</span><div><b>${esc(s[0])}</b><p>${esc(s[1])}</p>${i===1?`<div class="ichips"><span class="c-mine">${esc(t("st")[2])}</span><span>${esc(t("st")[1])}</span><span>${esc(t("st")[3])}</span></div>`:""}</div></li>`).join("")}</ol>
+    <ul class="irules">${t("introRules").map(r=>`<li>${esc(r)}</li>`).join("")}</ul>
+    <p class="inote">${esc(t("introNote"))}</p>
+    <p><button class="flink2" data-intro="lib">${esc(t("introBrowse"))} →</button></p>
+    <div class="cta"><button class="btn red" data-intro="sort">${esc(started?t("introCont"):t("introGo"))} →</button></div>
+  </section>`;
+}
 
 /* ---------- sort ---------- */
 function nextTodo(){let v=V.find(x=>!S(x.e).s&&!sess.skipped.has(x.e));if(!v&&sess.skipped.size){sess.skipped.clear();v=V.find(x=>!S(x.e).s)}return v}
@@ -221,7 +248,7 @@ function libList(){
 const WORK=["sc","note","ex"];
 function work(e){const s=S(e);return {sc:s.imp!=null&&s.liv!=null,note:!!(s.note&&s.note.trim()),ex:!!(s.ex&&s.ex.trim())}}
 const workN=e=>{const w=work(e);return WORK.filter(k=>w[k]).length};
-const STITCH=on=>`<svg class="${on?"on":""}" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2L8 8M8 2L2 8"/></svg>`;
+const STITCH=on=>`<svg class="${on?"on":""}" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="3.4"/></svg>`;
 function track(e){const w=work(e),n=workN(e);
   const lbl=`${t("trk")}: ${n} ${t("of")} 3 — `+WORK.map(k=>(w[k]?"✓ ":"○ ")+t("trkN")[k]).join(", ");
   return `<span class="trk" role="img" aria-label="${esc(lbl)}" title="${esc(lbl)}">${WORK.map(k=>STITCH(w[k])).join("")}</span>`}
@@ -308,6 +335,7 @@ function copyText(txt,btn){const fb=()=>{const io=$("#io");if(io){io.value=txt;i
 document.addEventListener("click",e=>{
   const el=e.target.closest("button,[data-close]");if(!el)return;
   if(el.dataset.go){if(sess.openE)closeDetail();go(el.dataset.go);return}
+  if(el.dataset.intro){D.intro=1;save();go(el.dataset.intro);return}
   if(el.dataset.lang){D.lang=el.dataset.lang;save();if(sess.openE)renderSheet();rerender();return}
   if(el.dataset.detail){openDetail(el.dataset.detail);return}
   if(el.hasAttribute("data-close")){closeDetail();return}
@@ -344,6 +372,6 @@ document.addEventListener("keydown",e=>{
 H.views={};
 const API={T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
   go,rerender,shell,sess,$,openDetail,closeDetail,renderSheet,summary,work,workN,track,STITCH,pick,nextTodo,foot,copyText,get view(){return view}};
-function boot(){loadData();go("home")}
+function boot(){loadData();go(D.intro?"home":"intro")}
 if(NX){NX.attach(API,H);Promise.resolve(NX.ready).then(boot)}else boot();
 })();
