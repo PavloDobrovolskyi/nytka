@@ -268,7 +268,22 @@ main{padding-block:28px 40px}
 .foot{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 20px}
 .foot .links{display:flex;gap:16px;margin-left:auto}
 .foot a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
-.foot a:hover{color:var(--ink)}
+.foot a:hover,.foot .flink:hover{color:var(--ink)}
+.foot .flink{font:inherit;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+
+/* about */
+html.about-mode .tabs,html.about-mode .bottom,html.about-mode #gear{display:none}
+html.about-mode #brand{visibility:hidden}
+html.about-mode body{padding-bottom:0}
+.about{max-width:560px;margin:-12px auto -24px;min-height:calc(100vh - 100px);min-height:calc(100dvh - 100px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:14px;padding-block:0}
+.about-sign{width:72px;height:72px;margin-bottom:4px}
+.about .eyebrow{margin:0}
+.about h1{font-size:clamp(40px,11vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1}
+.about-p{margin:0;font-size:17px;line-height:1.55}
+.about-p+.about-p{color:var(--muted)}
+.about-small{margin:4px 0 0;font-size:14px;color:var(--muted);border-left:3px solid var(--red);padding-left:12px}
+.about-go{margin-top:10px;min-width:200px}
+@media (max-height:760px){.about{gap:10px}.about-sign{width:52px;height:52px;margin:0}.about h1{font-size:40px}.about-p{font-size:15px;line-height:1.5}.about-small{font-size:13px}.about-go{margin-top:4px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>

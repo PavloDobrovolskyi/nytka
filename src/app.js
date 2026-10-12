@@ -32,7 +32,11 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
  foot:["Нитка — інструмент для самопізнання, твій помічник у роботі з психотерапевтом.","Дані тільки на цьому пристрої."],
- close:"Закрити",privacyL:"Конфіденційність",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
+ close:"Закрити",privacyL:"Конфіденційність",aboutL:"Про проєкт",
+ aboutEyebrow:"Простір для пошуку власних цінностей",
+ aboutP:["«Нитка» — інструмент самопізнання для тих, хто хоче краще зрозуміти себе: самостійно або разом із психотерапевтом. Цінності — це те, що для тебе по-справжньому важливо: свобода, близькі, чесність, спокій. Вони, як нитка, проходять крізь усі твої рішення, навіть коли ти про них не думаєш.","Тут 192 цінності, кожна з поясненням, прикладом з життя і питаннями до себе. Ти сортуєш їх на «Моє», «Можливо» й «Ні», звужуєш до 12 найважливіших і дивишся, наскільки твоє життя зараз з ними збігається."],
+ aboutSmall:"Без реєстрації: усе, що ти позначаєш і пишеш, лишається на твоєму пристрої. «Нитка» не замінює терапію.",
+ aboutGo:"Почати",aboutCont:"Продовжити",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
 en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  eyebrow:"192 values · Ukrainian and English",h1:"Find your <em>12</em> core values",
  lead:"Go through every value one card at a time, explore the ones that resonate, and narrow down to what matters most. Works on your own or alongside a therapist.",
@@ -59,7 +63,11 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
  foot:["Nytka is a tool for self-discovery — your companion in working with a psychotherapist.","Data stays on this device."],
- close:"Close",privacyL:"Privacy",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
+ close:"Close",privacyL:"Privacy",aboutL:"About",
+ aboutEyebrow:"A space to find your own values",
+ aboutP:["Nytka is a self-discovery tool for anyone who wants to understand themselves better, on their own or together with a psychotherapist. Values are what truly matters to you: freedom, the people close to you, honesty, calm. Like a thread, they run through all your decisions, even when you don't think about them.","There are 192 values here, each with an explanation, an example from life and questions for yourself. You sort them into “Mine”, “Maybe” and “No”, narrow down to the 12 that matter most, and see how closely your life matches them right now."],
+ aboutSmall:"No sign-up: everything you mark and write stays on your device. Nytka is not a substitute for therapy.",
+ aboutGo:"Start",aboutCont:"Continue",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
 };
 const COL={freedom:"red",courage:"ochre",achieve:"plum",mastery:"indigo",mind:"teal",order:"green",integrity:"indigo",justice:"plum",security:"green",calm:"teal",joy:"ochre",people:"red"};
 
@@ -126,7 +134,7 @@ function sign(v,cls,stitch){
 const IC={
  sort:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M7 4h10"/></svg>',
  lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
- mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l14 14M19 5L5 19"/></svg>',
+ mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7.5"/></svg>',
  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-6 8 6v9H4z"/></svg>',
  star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>',
  lock:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>'
@@ -146,7 +154,7 @@ function shell(){
   $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${IC[k]}<span>${esc(l)}${k==="mine"&&c[2]?` <span class="badge">${c[2]}</span>`:""}</span></button>`).join("");
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
-function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();(({home:home,sort:sort,lib:lib,mine:mine})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
+function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -170,7 +178,20 @@ function home(){
   ${done?`<div class="stat-row">${[2,1,3].map(k=>`<span class="pill"><i style="background:var(--${k===2?"mine":k===1?"maybe":"no"})"></i>${esc(t("st")[k])} ${c[k]}</span>`).join("")}</div>`:""}
   ${foot()}`;
 }
-const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a></span></footer>`;
+const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><button class="flink" data-go="about">${esc(t("aboutL"))}</button><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a></span></footer>`;
+
+/* ---------- about: what the project is ---------- */
+function about(){
+  const started=TOTAL-counts()[0]>0;
+  $("#view").innerHTML=`<section class="about">
+    ${sign({e:"Nytka",c:"freedom"},"about-sign",true)}
+    <p class="eyebrow">${esc(t("aboutEyebrow"))}</p>
+    <h1>${esc(t("brand"))}</h1>
+    ${t("aboutP").map(x=>`<p class="about-p">${esc(x)}</p>`).join("")}
+    <p class="about-small">${esc(t("aboutSmall"))}</p>
+    <button class="btn red about-go" data-about="go">${esc(started?t("aboutCont"):t("aboutGo"))} →</button>
+  </section>`;
+}
 
 /* ---------- sort ---------- */
 function nextTodo(){let v=V.find(x=>!S(x.e).s&&!sess.skipped.has(x.e));if(!v&&sess.skipped.size){sess.skipped.clear();v=V.find(x=>!S(x.e).s)}return v}
@@ -308,6 +329,7 @@ function copyText(txt,btn){const fb=()=>{const io=$("#io");if(io){io.value=txt;i
 document.addEventListener("click",e=>{
   const el=e.target.closest("button,[data-close]");if(!el)return;
   if(el.dataset.go){if(sess.openE)closeDetail();go(el.dataset.go);return}
+  if(el.dataset.about){const first=!D.about;D.about=1;save();go(first?"sort":"home");return}
   if(el.dataset.lang){D.lang=el.dataset.lang;save();if(sess.openE)renderSheet();rerender();return}
   if(el.dataset.detail){openDetail(el.dataset.detail);return}
   if(el.hasAttribute("data-close")){closeDetail();return}
@@ -344,6 +366,6 @@ document.addEventListener("keydown",e=>{
 H.views={};
 const API={T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
   go,rerender,shell,sess,$,openDetail,closeDetail,renderSheet,summary,work,workN,track,STITCH,pick,nextTodo,foot,copyText,get view(){return view}};
-function boot(){loadData();go("home")}
+function boot(){loadData();go(D.about?"home":"about")}
 if(NX){NX.attach(API,H);Promise.resolve(NX.ready).then(boot)}else boot();
 })();
