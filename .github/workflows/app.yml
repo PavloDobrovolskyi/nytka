@@ -91,6 +91,12 @@ jobs:
         run: |
           node ../build.js app
           npx cap sync ios
+      - name: Add widget extension to the Xcode project (no-op if already there)
+        working-directory: app/ios/App
+        run: |
+          gem list -i xcodeproj >/dev/null || sudo gem install xcodeproj --no-document
+          ruby scripts/add_widget.rb | tee "$RUNNER_TEMP/widget.log"
+          cp App.xcodeproj/project.pbxproj "$RUNNER_TEMP/project.pbxproj"
       - name: Build for simulator
         working-directory: app/ios/App
         run: |
@@ -120,6 +126,6 @@ jobs:
           echo "$STATUS $GITHUB_SHA $(date -u +%FT%TZ)" > status.txt
           tail -n 300 "$RUNNER_TEMP/build.log" > build-tail.log 2>/dev/null || echo "no log" > build-tail.log
           grep -nE "error:|BUILD FAILED" -B 2 -A 4 "$RUNNER_TEMP/build.log" > errors.log 2>/dev/null || true
-          cp "$RUNNER_TEMP"/ios-*.png . 2>/dev/null || true
+          cp "$RUNNER_TEMP"/ios-*.png "$RUNNER_TEMP"/widget.log "$RUNNER_TEMP"/project.pbxproj . 2>/dev/null || true
           git add -A && git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ios $STATUS ${GITHUB_SHA::7}"
           git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}" ci-ios

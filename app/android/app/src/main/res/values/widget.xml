@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_bg">#FBFBF8</color>
+    <color name="widget_ink">#151514</color>
+    <color name="widget_muted">#67655F</color>
+    <string name="widget_name">Нитка — фокус тижня</string>
+    <string name="widget_description">Цінність тижня і маленький крок до неї</string>
+</resources>
