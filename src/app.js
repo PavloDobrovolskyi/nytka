@@ -180,9 +180,9 @@ function sort(anim){
     <button class="more" data-detail="${esc(v.e)}">${esc(t("more"))} →</button>
    </article>
    <div class="choices">
-    <button class="c-no" data-pick="3" data-e="${esc(v.e)}">${esc(t("st")[3])}<kbd>1</kbd></button>
-    <button class="c-maybe" data-pick="1" data-e="${esc(v.e)}">${esc(t("st")[1])}<kbd>2</kbd></button>
-    <button class="c-mine" data-pick="2" data-e="${esc(v.e)}">${esc(t("st")[2])}<kbd>3</kbd></button>
+    <button class="c-mine" data-pick="2" data-e="${esc(v.e)}">${esc(t("st")[2])}</button>
+    <button class="c-maybe" data-pick="1" data-e="${esc(v.e)}">${esc(t("st")[1])}</button>
+    <button class="c-no" data-pick="3" data-e="${esc(v.e)}">${esc(t("st")[3])}</button>
    </div>
    <div class="sort-foot"><button data-undo ${sess.hist.length?"":"disabled"}>← ${esc(t("back"))}</button><button data-skip="${esc(v.e)}">${esc(t("skip"))} →</button></div>
   </div>`;
@@ -319,7 +319,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape"&&sess.openE){closeDetail();return}
   if(sess.openE||view!=="sort")return;
   if(/^(INPUT|TEXTAREA)$/.test((e.target||{}).tagName||""))return;
-  const map={"1":3,"2":1,"3":2};const v=nextTodo();
+  const map={"1":2,"2":1,"3":3};const v=nextTodo();
   if(map[e.key]&&v){e.preventDefault();pick(v.e,map[e.key])}
 });
 go("home");
