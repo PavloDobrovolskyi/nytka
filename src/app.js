@@ -134,13 +134,19 @@ function sign(v,cls,stitch){
 const IC={
  sort:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M7 4h10"/></svg>',
  lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
- mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7.5"/></svg>',
+ mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.5"/></svg>',
  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-6 8 6v9H4z"/></svg>',
  star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>',
  lock:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>'
 };
 
 /* ---------- shell ---------- */
+// «Мої» внизу: нулик, а всередині — скільки цінностей у «Моє»
+function mineIcon(n){
+  if(!n)return IC.mine;
+  const fs=n>99?7.5:n>9?9.5:11;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.5"/><text x="12" y="12.4" text-anchor="middle" dominant-baseline="middle" class="mi-n" font-size="${fs}">${n}</text></svg>`;
+}
 let view="home";
 const sess={skipped:new Set(),hist:[],lf:"all",lc:"all",lq:"",openE:null,armed:false};
 function shell(){
@@ -151,7 +157,7 @@ function shell(){
   const tabs=H.tabs?H.tabs(base):base;
   $("#tabs").innerHTML=tabs.map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${esc(l)}</button>`).join("");
   const c=counts();
-  $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${IC[k]}<span>${esc(l)}${k==="mine"&&c[2]?` <span class="badge">${c[2]}</span>`:""}</span></button>`).join("");
+  $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}${k==="mine"&&c[2]?` aria-label="${esc(l)}: ${c[2]}"`:""}>${k==="mine"?mineIcon(c[2]):IC[k]}<span>${esc(l)}</span></button>`).join("");
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
 function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
