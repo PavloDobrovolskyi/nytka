@@ -35,7 +35,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  close:"Закрити",privacyL:"Конфіденційність",aboutL:"Про проєкт",
  aboutEyebrow:"Простір для пошуку власних цінностей",
  aboutP:["«Нитка» — інструмент самопізнання для тих, хто хоче краще зрозуміти себе: самостійно або разом із психотерапевтом. Цінності — це те, що для тебе по-справжньому важливо: свобода, близькі, чесність, спокій. Вони, як нитка, проходять крізь усі твої рішення, навіть коли ти про них не думаєш.","Тут 192 цінності, кожна з поясненням, прикладом з життя і питаннями до себе. Ти сортуєш їх на «Моє», «Можливо» й «Ні», звужуєш до 12 найважливіших і дивишся, наскільки твоє життя зараз з ними збігається."],
- aboutSmall:"Без реєстрації: усе, що ти позначаєш і пишеш, лишається на твоєму пристрої. «Нитка» не замінює терапію.",
+ aboutSmall:"Без реєстрації: усе, що ти позначаєш і пишеш, лишається на твоєму пристрої.",
  aboutGo:"Почати",aboutCont:"Продовжити",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
 en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  eyebrow:"192 values · Ukrainian and English",h1:"Find your <em>12</em> core values",
@@ -66,7 +66,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  close:"Close",privacyL:"Privacy",aboutL:"About",
  aboutEyebrow:"A space to find your own values",
  aboutP:["Nytka is a self-discovery tool for anyone who wants to understand themselves better, on their own or together with a psychotherapist. Values are what truly matters to you: freedom, the people close to you, honesty, calm. Like a thread, they run through all your decisions, even when you don't think about them.","There are 192 values here, each with an explanation, an example from life and questions for yourself. You sort them into “Mine”, “Maybe” and “No”, narrow down to the 12 that matter most, and see how closely your life matches them right now."],
- aboutSmall:"No sign-up: everything you mark and write stays on your device. Nytka is not a substitute for therapy.",
+ aboutSmall:"No sign-up: everything you mark and write stays on your device.",
  aboutGo:"Start",aboutCont:"Continue",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
 };
 const COL={freedom:"red",courage:"ochre",achieve:"plum",mastery:"indigo",mind:"teal",order:"green",integrity:"indigo",justice:"plum",security:"green",calm:"teal",joy:"ochre",people:"red"};
