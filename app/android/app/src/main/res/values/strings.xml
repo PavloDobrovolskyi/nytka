@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Нитка</string>
+    <string name="title_activity_main">Нитка</string>
+    <string name="package_name">ua.nytka.app</string>
+    <string name="custom_url_scheme">ua.nytka.app</string>
+</resources>

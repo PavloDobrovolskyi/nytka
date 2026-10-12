@@ -1,5 +1,9 @@
 (function(){
 "use strict";
+/* NX — розширення застосунку (є тільки в збірці для iOS/Android; на сайті null).
+   H — точки розширення; на сайті порожні, тож поведінка сайту не змінюється. */
+const NX=window.NYX||null;
+const H={};
 /* ---------- strings ---------- */
 const T={
 uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності",mine:"Мої",home:"Головна",
@@ -66,10 +70,13 @@ const TOTAL=V.length;
 
 /* ---------- storage ---------- */
 const KEY="nytka-v1";
+const STORE=(NX&&NX.store)||{get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v)};
 let D={lang:"uk",st:{}};let canStore=true;
-try{const r=JSON.parse(localStorage.getItem(KEY)||"null");if(r&&typeof r==="object"&&r.st)D=r;localStorage.setItem("__n","1");localStorage.removeItem("__n")}catch(e){canStore=false}
-if(!D.lang)D.lang=(navigator.language||"").toLowerCase().startsWith("uk")?"uk":"uk";
-function save(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
+function loadData(){
+  try{const r=JSON.parse(STORE.get(KEY)||"null");if(r&&typeof r==="object"&&r.st)D=r;if(!NX){localStorage.setItem("__n","1");localStorage.removeItem("__n")}}catch(e){canStore=false}
+  if(!D.lang)D.lang=(navigator.language||"").toLowerCase().startsWith("uk")?"uk":"uk";
+}
+function save(){try{STORE.set(KEY,JSON.stringify(D))}catch(e){}if(H.onChange)H.onChange()}
 const S=e=>D.st[e]||{};
 function setS(e,patch){const o=Object.assign({},D.st[e]||{},patch);Object.keys(o).forEach(k=>{if(o[k]===undefined||o[k]===""||o[k]===0&&k==="s"||o[k]===false)delete o[k]});if(Object.keys(o).length)D.st[e]=o;else delete D.st[e];save()}
 
@@ -132,13 +139,14 @@ function shell(){
   document.documentElement.lang=D.lang==="en"?"en":"uk";
   document.title=t("brand");
   $("#brand").innerHTML=sign({e:"Nytka",c:"freedom"},"",false)+esc(t("brand"));
-  const tabs=[["sort",t("sort")],["lib",t("lib")],["mine",t("mine")]];
+  const base=[["sort",t("sort")],["lib",t("lib")],["mine",t("mine")]];
+  const tabs=H.tabs?H.tabs(base):base;
   $("#tabs").innerHTML=tabs.map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${esc(l)}</button>`).join("");
   const c=counts();
-  $("#bottom").innerHTML=[["home",t("home")],...tabs].map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${IC[k]}<span>${esc(l)}${k==="mine"&&c[2]?` <span class="badge">${c[2]}</span>`:""}</span></button>`).join("");
+  $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${IC[k]}<span>${esc(l)}${k==="mine"&&c[2]?` <span class="badge">${c[2]}</span>`:""}</span></button>`).join("");
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
-function go(v,keepScroll){view=v;shell();({home:home,sort:sort,lib:lib,mine:mine})[v]();if(!keepScroll)window.scrollTo(0,0)}
+function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();(({home:home,sort:sort,lib:lib,mine:mine})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -186,8 +194,9 @@ function sort(anim){
    </div>
    <div class="sort-foot"><button data-undo ${sess.hist.length?"":"disabled"}>← ${esc(t("back"))}</button><button data-skip="${esc(v.e)}">${esc(t("skip"))} →</button></div>
   </div>`;
+  if(H.afterRender)H.afterRender("sort");
 }
-function pick(e,val){setS(e,{s:val});sess.hist.push(e);shell();sort(true)}
+function pick(e,val){if(H.onPick)H.onPick(e,val);setS(e,{s:val});sess.hist.push(e);shell();sort(true)}
 
 /* ---------- library ---------- */
 function lib(){
@@ -246,7 +255,7 @@ function renderSheet(){
      <div class="fld"><label for="note">${esc(t("noteL"))}</label><textarea id="note" placeholder="${esc(t("notePh"))}">${esc(st.note||"")}</textarea></div>
      <div class="fld"><label for="ex">${esc(t("exL"))}</label><textarea id="ex" placeholder="${esc(t("exPh"))}">${esc(st.ex||"")}</textarea></div>
      <p class="autosave">${esc(t("autosave"))}</p>
-    </section>
+    </section>${H.sheetExtra?H.sheetExtra(v):""}
    </div></div>`;
   $("#sheet .sheet").scrollTop=0;
 }
@@ -271,15 +280,15 @@ function mine(){
    <div class="gap">${gp.map(({v,i,l})=>`<div class="gp"><b>${esc(nm(v))}</b><div class="gscale"><span class="ln" style="left:${Math.min(i,l)*10}%;width:${Math.abs(i-l)*10}%"></span><span class="di" style="left:${i*10}%"></span><span class="dl" style="left:${l*10}%"></span></div><span class="num">${i-l>0?"−":i-l<0?"+":""}${Math.abs(i-l)}</span></div>`).join("")}
    <div class="gaxis"><span></span><div><span>0</span><span>5</span><span>10</span></div><span></span></div></div>`:`<p class="empty" style="padding:8px 0">${esc(t("gapEmpty"))}</p>`}
   </section>
-  <section class="panel"><h2>${esc(t("sumT"))}</h2><p class="hint">${esc(t("sumHint"))}</p>
+  ${H.mineExtra?H.mineExtra():""}<section class="panel"><h2>${esc(t("sumT"))}</h2><p class="hint">${esc(t("sumHint"))}</p>
    <pre class="summary" id="sum">${esc(summary())}</pre>
-   <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button></div>
+   <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
   </section>
-  <section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
+  ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
    <div class="tools"><button class="btn small" id="exp">${esc(t("exportB"))}</button><button class="btn small" id="imp">${esc(t("importB"))}</button><span class="note-ok" id="ioMsg"></span></div>
    <textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}"></textarea>
    <div class="tools"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div>
-  </section>${foot()}`;
+  </section>`}${foot()}`;
 }
 function summary(){
   const my=V.filter(v=>S(v.e).s===2);if(!my.length)return t("emptyMine");
@@ -316,7 +325,7 @@ document.addEventListener("click",e=>{
   if(el.id==="imp"){const raw=($("#io").value||"").trim();try{if(!raw.startsWith("NYTKA1:"))throw 0;const st=JSON.parse(decodeURIComponent(escape(atob(raw.slice(7)))));if(!st||typeof st!=="object")throw 0;
       Object.keys(st).forEach(k=>{if(!BY[k])delete st[k]});D.st=st;save();shell();mine();$("#ioMsg").textContent=t("imported")}catch(x){$("#ioMsg").textContent=t("badCode")}return}
   if(el.id==="wipe"){if(!sess.armed){sess.armed=true;$("#wipeMsg").textContent=t("wipeAsk");setTimeout(()=>{sess.armed=false;const m=$("#wipeMsg");if(m)m.textContent=""},3500);return}
-    sess.armed=false;D.st={};sess.hist=[];save();shell();mine();return}
+    sess.armed=false;D.st={};sess.hist=[];if(H.onWipe)H.onWipe();save();shell();mine();return}
 });
 document.addEventListener("input",e=>{
   const el=e.target;
@@ -332,5 +341,9 @@ document.addEventListener("keydown",e=>{
   const map={"1":2,"2":1,"3":3};const v=nextTodo();
   if(map[e.key]&&v){e.preventDefault();pick(v.e,map[e.key])}
 });
-go("home");
+H.views={};
+const API={T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
+  go,rerender,shell,sess,$,openDetail,closeDetail,renderSheet,summary,work,workN,track,STITCH,pick,nextTodo,foot,copyText,get view(){return view}};
+function boot(){loadData();go("home")}
+if(NX){NX.attach(API,H);Promise.resolve(NX.ready).then(boot)}else boot();
 })();

@@ -1,0 +1,19 @@
+{
+  "appId": "ua.nytka.app",
+  "appName": "Нитка",
+  "webDir": "www",
+  "backgroundColor": "#efeee9",
+  "ios": {
+    "contentInset": "never",
+    "scheme": "Nytka"
+  },
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_nytka",
+      "iconColor": "#C81E2A"
+    }
+  }
+}

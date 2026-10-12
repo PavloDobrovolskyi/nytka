@@ -1,0 +1,125 @@
+# Збирає застосунок «Нитка» для Android та iOS при кожній зміні.
+# Android: тестовий APK публікується в Releases (тег android-test) — його можна встановити на телефон.
+# iOS: збірка для симулятора + знімок екрана першого запуску (підпис і TestFlight додамо, коли буде акаунт Apple).
+# Журнали й знімки кладуться в гілки ci-android / ci-ios, щоб їх можна було переглянути без входу в Actions.
+name: App builds
+
+on:
+  push:
+    branches: [main, app]
+    paths: ["app/**", "src/**", "public/**", "build.js", ".github/workflows/app.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash   # з pipefail: помилка збірки не ховається за tee
+
+concurrency:
+  group: app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install
+        working-directory: app
+        run: npm ci --no-audit --no-fund
+      - name: Build web part and sync
+        working-directory: app
+        run: |
+          node ../build.js app
+          npx cap sync android
+      - name: Build debug APK
+        working-directory: app/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/build.log"
+      - name: Publish test APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/android/app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/nytka-test.apk"
+          gh release delete android-test --yes --cleanup-tag || true
+          gh release create android-test "$RUNNER_TEMP/nytka-test.apk" --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Нитка — тестова збірка Android" \
+            --notes "Тестова збірка з коміту ${GITHUB_SHA::7} (гілка ${GITHUB_REF_NAME}). Як встановити: відкрий цю сторінку на Android-телефоні, завантаж nytka-test.apk і відкрий файл. Телефон попросить дозволити встановлення з цього джерела — дозволь. Це не версія для магазину: вона не підписана для Google Play."
+      - name: Save log to ci-android branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ job.status }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/ci" && cd "$RUNNER_TEMP/ci"
+          git init -q -b ci-android
+          echo "$STATUS $GITHUB_SHA $(date -u +%FT%TZ)" > status.txt
+          tail -n 400 "$RUNNER_TEMP/build.log" > build-tail.log 2>/dev/null || echo "no log" > build-tail.log
+          grep -nE "error:|e: |FAILURE|What went wrong" -A 6 "$RUNNER_TEMP/build.log" > errors.log 2>/dev/null || true
+          git add -A && git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "android $STATUS ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}" ci-android
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install
+        working-directory: app
+        run: npm ci --no-audit --no-fund
+      - name: Build web part and sync
+        working-directory: app
+        run: |
+          node ../build.js app
+          npx cap sync ios
+      - name: Build for simulator
+        working-directory: app/ios/App
+        run: |
+          xcodebuild -version | tee "$RUNNER_TEMP/build.log"
+          set -o pipefail
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee -a "$RUNNER_TEMP/build.log" | grep -E "error|warning: .*deprecated|BUILD" || true
+          test -d "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator/App.app"
+      - name: Launch in simulator and take screenshots
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys;d=json.load(sys.stdin)['devices'];c=[x for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')];c.sort(key=lambda x:x['name']);print(c[-1]['udid'])")
+          xcrun simctl boot "$UDID"; xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$RUNNER_TEMP/dd/Build/Products/Debug-iphonesimulator/App.app"
+          xcrun simctl launch "$UDID" ua.nytka.app; sleep 15
+          xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/ios-launch.png"
+          xcrun simctl ui "$UDID" appearance dark; sleep 4
+          xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/ios-dark.png"
+      - name: Save log to ci-ios branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ job.status }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/ci" && cd "$RUNNER_TEMP/ci"
+          git init -q -b ci-ios
+          echo "$STATUS $GITHUB_SHA $(date -u +%FT%TZ)" > status.txt
+          tail -n 300 "$RUNNER_TEMP/build.log" > build-tail.log 2>/dev/null || echo "no log" > build-tail.log
+          grep -nE "error:|BUILD FAILED" -B 2 -A 4 "$RUNNER_TEMP/build.log" > errors.log 2>/dev/null || true
+          cp "$RUNNER_TEMP"/ios-*.png . 2>/dev/null || true
+          git add -A && git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ios $STATUS ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}" ci-ios
