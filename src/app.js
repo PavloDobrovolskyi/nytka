@@ -31,7 +31,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  wipe:"Стерти все",wipeAsk:"Натисни ще раз, щоб стерти всі дані",
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
- foot:["Нитка — інструмент для самопізнання, твій помічник у роботі з психотерапевтом.","Дані тільки на цьому пристрої."],
+ foot:["Нитка — інструмент для самопізнання, твій помічник у роботі з психотерапевтом."],mStat:["обрано","у топ-5","опрацьовано"],
  close:"Закрити",privacyL:"Конфіденційність",aboutL:"Про проєкт",
  aboutEyebrow:"Простір для пошуку власних цінностей",
  aboutP:["«Нитка» — інструмент самопізнання для тих, хто хоче краще зрозуміти себе: самостійно або разом із психотерапевтом. Цінності — це те, що для тебе по-справжньому важливо: свобода, близькі, чесність, спокій. Вони, як нитка, проходять крізь усі твої рішення, навіть коли ти про них не думаєш.","Тут 192 цінності, кожна з поясненням, прикладом з життя і питаннями до себе. Ти сортуєш їх на «Моє», «Можливо» й «Ні», звужуєш до 12 найважливіших і дивишся, наскільки твоє життя зараз з ними збігається."],
@@ -62,7 +62,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  wipe:"Erase everything",wipeAsk:"Tap again to erase all data",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
- foot:["Nytka is a tool for self-discovery — your companion in working with a psychotherapist.","Data stays on this device."],
+ foot:["Nytka is a tool for self-discovery — your companion in working with a psychotherapist."],mStat:["chosen","in top 5","worked through"],
  close:"Close",privacyL:"Privacy",aboutL:"About",
  aboutEyebrow:"A space to find your own values",
  aboutP:["Nytka is a self-discovery tool for anyone who wants to understand themselves better, on their own or together with a psychotherapist. Values are what truly matters to you: freedom, the people close to you, honesty, calm. Like a thread, they run through all your decisions, even when you don't think about them.","There are 192 values here, each with an explanation, an example from life and questions for yourself. You sort them into “Mine”, “Maybe” and “No”, narrow down to the 12 that matter most, and see how closely your life matches them right now."],
@@ -291,7 +291,9 @@ function mine(){
   const gp=my.filter(v=>S(v.e).imp!=null&&S(v.e).liv!=null).map(v=>({v,i:S(v.e).imp,l:S(v.e).liv})).sort((a,b)=>(b.i-b.l)-(a.i-a.l));
   const sorted=my.slice().sort((a,b)=>(S(b.e).top?1:0)-(S(a.e).top?1:0));
   $("#view").innerHTML=`<div class="mine-head"><h1>${esc(t("mineT"))}</h1><p class="muted" style="max-width:62ch">${esc(t("mineP"))}</p></div>
-  <section class="panel"><h2>${esc(t("mineList"))}<small>${my.length} / 12 · ${t("top5")} ${tops} / 5${my.length?` · ${t("worked")} ${my.filter(v=>workN(v.e)===3).length} / ${my.length}`:""}</small></h2><p class="hint">${esc(t("topHint"))}</p>
+  <section class="panel"><h2>${esc(t("mineList"))}</h2>
+   <div class="mstats"><div><b>${my.length}<i> / 12</i></b><span>${esc(t("mStat")[0])}</span></div><div><b>${tops}<i> / 5</i></b><span>${esc(t("mStat")[1])}</span></div>${my.length?`<div><b>${my.filter(v=>workN(v.e)===3).length}<i> / ${my.length}</i></b><span>${esc(t("mStat")[2])}</span></div>`:""}</div>
+   <p class="hint">${esc(t("topHint"))}</p>
    ${my.length>12?`<div class="warnbox">${esc(t("over"))}</div>`:""}
    ${my.length?`<div class="rows">${sorted.map(v=>row(v)).join("")}</div>`:`<p class="empty">${esc(t("emptyMine"))} <button class="more" data-go="sort">${esc(t("sort"))} →</button></p>`}
   </section>
