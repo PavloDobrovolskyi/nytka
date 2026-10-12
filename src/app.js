@@ -28,7 +28,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
  foot:["Нитка — інструмент для самопізнання, твій помічник у роботі з психотерапевтом.","Дані тільки на цьому пристрої."],
- close:"Закрити",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
+ close:"Закрити",privacyL:"Конфіденційність",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
 en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  eyebrow:"192 values · Ukrainian and English",h1:"Find your <em>12</em> core values",
  lead:"Go through every value one card at a time, explore the ones that resonate, and narrow down to what matters most. Works on your own or alongside a therapist.",
@@ -55,7 +55,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
  foot:["Nytka is a tool for self-discovery — your companion in working with a psychotherapist.","Data stays on this device."],
- close:"Close",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
+ close:"Close",privacyL:"Privacy",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
 };
 const COL={freedom:"red",courage:"ochre",achieve:"plum",mastery:"indigo",mind:"teal",order:"green",integrity:"indigo",justice:"plum",security:"green",calm:"teal",joy:"ochre",people:"red"};
 
@@ -162,7 +162,7 @@ function home(){
   ${done?`<div class="stat-row">${[2,1,3].map(k=>`<span class="pill"><i style="background:var(--${k===2?"mine":k===1?"maybe":"no"})"></i>${esc(t("st")[k])} ${c[k]}</span>`).join("")}</div>`:""}
   ${foot()}`;
 }
-const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}</footer>`;
+const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a></span></footer>`;
 
 /* ---------- sort ---------- */
 function nextTodo(){let v=V.find(x=>!S(x.e).s&&!sess.skipped.has(x.e));if(!v&&sess.skipped.size){sess.skipped.clear();v=V.find(x=>!S(x.e).s)}return v}
