@@ -13,7 +13,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  life:"У житті",ask:"Спитай себе",what:"Що це",confuse:"Не плутати",shadow:"Коли її забагато",questions:"Питання до себе",step:"Маленький крок на тиждень",precise:"Точніше",
  gq:["Коли я востаннє жив за цією цінністю?","Що мені заважає жити за нею більше?"],
  forMe:"Для мене",imp:"Наскільки це важливо для мене",liv:"Наскільки я зараз за цим живу",low:"зовсім ні",high:"дуже",
- noteL:"Що це значить для мене",exL:"Приклад з мого життя",notePh:"Своїми словами…",exPh:"Ситуація, де ця цінність проявилась або була порушена…",autosave:"Зберігається автоматично",
+ noteL:"Що це значить для мене",exL:"Приклад з мого життя",notePh:"Своїми словами…",exPh:"Ситуація, де ця цінність проявилась або була порушена…",autosave:"Зберігається автоматично",trk:"Опрацьовано",trkN:{sc:"дві шкали",note:"що це значить для мене",ex:"приклад з життя"},worked:"опрацьовано",
  doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",
  allT:"Усі цінності",search:"Пошук: свобода, freedom…",all:"Усі",nothing:"Нічого не знайдено.",
  mineT:"Мої цінності",mineP:"Тут збирається все, що ти позначив. Ціль — 12 цінностей у «Моє», з них 5 найголовніших.",
@@ -40,7 +40,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  life:"In life",ask:"Ask yourself",what:"What it is",confuse:"Don't confuse",shadow:"When there's too much",questions:"Questions for yourself",step:"A small step this week",precise:"More precisely",
  gq:["When did I last live by this value?","What stops me living by it more?"],
  forMe:"For me",imp:"How important this is to me",liv:"How much I live by it now",low:"not at all",high:"a lot",
- noteL:"What it means to me",exL:"An example from my life",notePh:"In your own words…",exPh:"A situation where this value showed up or was violated…",autosave:"Saved automatically",
+ noteL:"What it means to me",exL:"An example from my life",notePh:"In your own words…",exPh:"A situation where this value showed up or was violated…",autosave:"Saved automatically",trk:"Worked through",trkN:{sc:"both scales",note:"what it means to me",ex:"example from life"},worked:"worked through",
  doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",
  allT:"All values",search:"Search: freedom, свобода…",all:"All",nothing:"Nothing found.",
  mineT:"My values",mineP:"Everything you've marked gathers here. The goal is 12 values in “Mine”, 5 of them the most important.",
@@ -208,7 +208,17 @@ function libList(){
      <div class="tiles">${items.map(tile).join("")}</div></section>`}).join("");
   $("#groups").innerHTML=any?html:`<p class="empty">${esc(t("nothing"))}</p>`;
 }
-function tile(v){const s=S(v.e).s||0;return `<button class="tile" data-detail="${esc(v.e)}" data-s="${s}">${sign(v)}<span class="tn">${esc(nm(v))}</span><span class="ts">${esc(other(v))}</span>${s?`<span class="stmark">${esc(t("stShort")[s])}</span>`:""}</button>`}
+/* ---------- progress tracker (3 stitches) ---------- */
+const WORK=["sc","note","ex"];
+function work(e){const s=S(e);return {sc:s.imp!=null&&s.liv!=null,note:!!(s.note&&s.note.trim()),ex:!!(s.ex&&s.ex.trim())}}
+const workN=e=>{const w=work(e);return WORK.filter(k=>w[k]).length};
+const STITCH=on=>`<svg class="${on?"on":""}" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2L8 8M8 2L2 8"/></svg>`;
+function track(e){const w=work(e),n=workN(e);
+  const lbl=`${t("trk")}: ${n} ${t("of")} 3 — `+WORK.map(k=>(w[k]?"✓ ":"○ ")+t("trkN")[k]).join(", ");
+  return `<span class="trk" role="img" aria-label="${esc(lbl)}" title="${esc(lbl)}">${WORK.map(k=>STITCH(w[k])).join("")}</span>`}
+function trackFull(e){const w=work(e);return WORK.map(k=>`<span class="${w[k]?"done":""}">${STITCH(w[k])}${esc(t("trkN")[k])}</span>`).join("")}
+function updTrk(){const e=sess.openE;if(!e)return;const a=$("#meTrk"),c=$("#meCount");if(a)a.innerHTML=trackFull(e);if(c)c.textContent=`${workN(e)} ${t("of")} 3`}
+function tile(v){const s=S(v.e).s||0;return `<button class="tile" data-detail="${esc(v.e)}" data-s="${s}">${sign(v)}<span class="tn">${esc(nm(v))}</span><span class="ts">${esc(other(v))}</span>${s===2||workN(v.e)?track(v.e):""}${s?`<span class="stmark">${esc(t("stShort")[s])}</span>`:""}</button>`}
 
 /* ---------- detail sheet ---------- */
 function openDetail(e){sess.openE=e;renderSheet();const sp=$("#sheet .sheet");if(sp)sp.classList.add("anim");document.body.style.overflow="hidden";const sh=$("#sheet");sh.hidden=false;setTimeout(()=>{const b=sh.querySelector("[data-close-btn]");b&&b.focus({preventScroll:true})},30)}
@@ -231,7 +241,7 @@ function renderSheet(){
      <div class="sec"><h3>${esc(t("questions"))}</h3><ol><li>${esc(f(v,"q"))}</li>${t("gq").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>
      <div class="sec step wide"><h3>${esc(t("step"))}</h3><p>${esc(f(v,"k"))}</p></div>
     </div>
-    <section class="me"><h3>${esc(t("forMe"))}</h3>
+    <section class="me"><div class="me-head"><h3>${esc(t("forMe"))}</h3><span id="meCount">${workN(v.e)} ${t("of")} 3</span></div><div class="metrk" id="meTrk">${trackFull(v.e)}</div>
      ${rng("imp",t("imp"),st.imp)}${rng("liv",t("liv"),st.liv)}
      <div class="fld"><label for="note">${esc(t("noteL"))}</label><textarea id="note" placeholder="${esc(t("notePh"))}">${esc(st.note||"")}</textarea></div>
      <div class="fld"><label for="ex">${esc(t("exL"))}</label><textarea id="ex" placeholder="${esc(t("exPh"))}">${esc(st.ex||"")}</textarea></div>
@@ -246,12 +256,12 @@ function mine(){
   const my=V.filter(v=>S(v.e).s===2),maybe=V.filter(v=>S(v.e).s===1);
   const tops=my.filter(v=>S(v.e).top).length;
   const row=(v,isMaybe)=>{const s=S(v.e);const sc=(s.imp!=null||s.liv!=null)?`${t("sumImp")} ${s.imp??"—"} · ${t("sumLiv")} ${s.liv??"—"}`:esc(other(v));
-    return `<div class="row">${sign(v,"sg")}<button class="rn" data-detail="${esc(v.e)}"><b>${esc(nm(v))}</b><span>${sc}</span></button>
+    return `<div class="row">${sign(v,"sg")}<button class="rn" data-detail="${esc(v.e)}"><b>${esc(nm(v))}</b><span class="rsub">${!isMaybe||workN(v.e)?track(v.e):""}<span>${sc}</span></span></button>
      ${isMaybe?`<button class="mini" data-promote="${esc(v.e)}">${esc(t("toMineBtn"))}</button>`:`<button class="star" data-top="${esc(v.e)}" aria-pressed="${String(!!s.top)}" aria-label="${esc(t("top5"))}" ${!s.top&&tops>=5?"disabled style='opacity:.35'":""}>${IC.star}</button>`}</div>`};
   const gp=my.filter(v=>S(v.e).imp!=null&&S(v.e).liv!=null).map(v=>({v,i:S(v.e).imp,l:S(v.e).liv})).sort((a,b)=>(b.i-b.l)-(a.i-a.l));
   const sorted=my.slice().sort((a,b)=>(S(b.e).top?1:0)-(S(a.e).top?1:0));
   $("#view").innerHTML=`<div class="mine-head"><h1>${esc(t("mineT"))}</h1><p class="muted" style="max-width:62ch">${esc(t("mineP"))}</p></div>
-  <section class="panel"><h2>${esc(t("mineList"))}<small>${my.length} / 12 · ${t("top5")} ${tops} / 5</small></h2><p class="hint">${esc(t("topHint"))}</p>
+  <section class="panel"><h2>${esc(t("mineList"))}<small>${my.length} / 12 · ${t("top5")} ${tops} / 5${my.length?` · ${t("worked")} ${my.filter(v=>workN(v.e)===3).length} / ${my.length}`:""}</small></h2><p class="hint">${esc(t("topHint"))}</p>
    ${my.length>12?`<div class="warnbox">${esc(t("over"))}</div>`:""}
    ${my.length?`<div class="rows">${sorted.map(v=>row(v)).join("")}</div>`:`<p class="empty">${esc(t("emptyMine"))} <button class="more" data-go="sort">${esc(t("sort"))} →</button></p>`}
   </section>
@@ -312,8 +322,8 @@ document.addEventListener("input",e=>{
   const el=e.target;
   if(el.id==="q"){sess.lq=el.value;libList();return}
   if(!sess.openE)return;
-  if(el.id==="imp"||el.id==="liv"){const v=+el.value;setS(sess.openE,{[el.id]:v});$("#o-"+el.id).textContent=v;$("#w-"+el.id).classList.remove("unset");return}
-  if(el.id==="note"||el.id==="ex"){setS(sess.openE,{[el.id]:el.value});return}
+  if(el.id==="imp"||el.id==="liv"){const v=+el.value;setS(sess.openE,{[el.id]:v});$("#o-"+el.id).textContent=v;$("#w-"+el.id).classList.remove("unset");updTrk();return}
+  if(el.id==="note"||el.id==="ex"){setS(sess.openE,{[el.id]:el.value});updTrk();return}
 });
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"&&sess.openE){closeDetail();return}

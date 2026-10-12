@@ -218,6 +218,16 @@ main{padding-block:28px 40px}
 .fld label{display:block;font-size:14.5px;font-weight:500;margin-bottom:6px}
 .fld textarea{width:100%;min-height:96px;font:inherit;font-size:15.5px;line-height:1.5;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
 .autosave{font-size:12.5px;color:var(--muted);margin:0}
+.trk{display:inline-flex;gap:3px;align-items:center;vertical-align:middle;line-height:0}
+.trk svg,.metrk svg{width:11px;height:11px;fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round;opacity:.35;flex:0 0 11px}
+.trk svg.on,.metrk svg.on{stroke:var(--red);opacity:1}
+.tile .trk{margin-top:2px}
+.rsub{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.me-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+#meCount{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.metrk{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--muted);margin-top:-8px}
+.metrk span{display:inline-flex;align-items:center;gap:6px}
+.metrk span.done{color:var(--ink)}
 
 /* mine */
 .mine-head h1{font-size:clamp(26px,5vw,38px)}
