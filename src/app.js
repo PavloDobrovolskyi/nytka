@@ -334,6 +334,7 @@ function copyText(txt,btn){const fb=()=>{const io=$("#io");if(io){io.value=txt;i
   try{navigator.clipboard.writeText(txt).then(()=>{btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)},fb)}catch(e){fb()}}
 
 /* ---------- events ---------- */
+document.addEventListener("touchstart",()=>{},{passive:true}); // щоб на iPhone працював :active (натиск)
 document.addEventListener("click",e=>{
   const el=e.target.closest("button,[data-close]");if(!el)return;
   if(el.dataset.go){if(sess.openE)closeDetail();go(el.dataset.go);return}

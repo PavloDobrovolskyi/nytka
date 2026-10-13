@@ -139,11 +139,12 @@ main{padding-block:28px 40px}
 .blk.q p{font-style:italic}
 .more{align-self:flex-start;font-weight:600;font-size:14.5px;border-bottom:1.5px solid var(--red);padding-bottom:1px}
 .choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.choices button{padding:15px 6px;border-radius:16px;font-weight:600;font-size:15.5px;border:1.5px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,background .15s}
+.choices button{padding:15px 6px;border-radius:16px;font-weight:600;font-size:15.5px;border:1.5px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,background .15s,border-color .15s,color .15s}
 .choices button:active{transform:scale(.96)}
-.choices .c-no:hover{border-color:var(--no)}
-.choices .c-maybe:hover{border-color:var(--maybe)}
-.choices .c-mine{background:var(--red);border-color:var(--red);color:var(--on-red)}
+@media (hover:hover){.choices .c-mine:hover{border-color:var(--mine)}.choices .c-maybe:hover{border-color:var(--maybe)}.choices .c-no:hover{border-color:var(--no)}}
+.choices .c-mine:active{background:var(--mine);border-color:var(--mine);color:var(--on-red)}
+.choices .c-maybe:active{background:var(--maybe);border-color:var(--maybe);color:var(--on-red)}
+.choices .c-no:active{background:var(--no);border-color:var(--no);color:var(--on-red)}
 .sort-foot{display:flex;justify-content:space-between;margin-top:14px;font-size:14.5px;color:var(--muted)}
 .sort-foot button:disabled{opacity:.35;cursor:default}
 .done-card{text-align:center;padding:40px 20px}
