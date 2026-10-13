@@ -9,7 +9,7 @@ const T={
 uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності",mine:"Мої",home:"Головна",
  eyebrow:"192 цінності · українською та англійською",h1:"Знайди свої <em>12</em> цінностей",
  lead:"Пройди всі цінності по одній картці, поглиб ті, що відгукуються, і звузь до найважливіших. Підходить для самостійної роботи і для роботи з психотерапевтом.",
- start:"Почати",cont:"Продовжити",browse:"Переглянути всі",
+ start:"Почати",startSort:"Почати сортування",cont:"Продовжити",browse:"Переглянути всі",
  privacy:"Усе, що ти позначаєш і пишеш, зберігається тільки на цьому пристрої.",
  how:[["Відсортуй","Для кожної цінності: «Моє», «Можливо» або «Ні». Не думай довго, довіряй першому відгуку."],["Поглиб","Відкрий картку: тінь цінності, питання до себе, маленький крок, твої нотатки і дві шкали."],["Звузь","Залиш 12, познач топ-5 і подивись, де розходяться «важливо для мене» і «як я живу зараз». Підсумок можна показати терапевту."]],
  st:{2:"Моє",1:"Можливо",3:"Ні",0:"Не оцінені"},stShort:{2:"Моє",1:"Може",3:"Ні"},
@@ -40,7 +40,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
 en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  eyebrow:"192 values · Ukrainian and English",h1:"Find your <em>12</em> core values",
  lead:"Go through every value one card at a time, explore the ones that resonate, and narrow down to what matters most. Works on your own or alongside a therapist.",
- start:"Start",cont:"Continue",browse:"Browse all",
+ start:"Start",startSort:"Start sorting",cont:"Continue",browse:"Browse all",
  privacy:"Everything you mark and write is stored only on this device.",
  how:[["Sort","For each value: “Mine”, “Maybe” or “No”. Don't overthink it, trust your first response."],["Explore","Open a card: the value's shadow side, questions, a small step, your notes and two scales."],["Narrow","Keep 12, mark your top 5 and see where “what matters to me” and “how I live now” differ. Share the summary with your therapist."]],
  st:{2:"Mine",1:"Maybe",3:"No",0:"Not rated"},stShort:{2:"Mine",1:"Maybe",3:"No"},
@@ -173,7 +173,7 @@ function home(){
       <p class="eyebrow">${esc(t("eyebrow"))}</p>
       <h1>${t("h1")}</h1>
       <p class="lead">${esc(t("lead"))}</p>
-      <div class="cta"><button class="btn red" data-go="sort">${esc(done?t("cont"):t("start"))} →</button><button class="btn" data-go="lib">${esc(t("browse"))}</button></div>
+      <div class="cta"><button class="btn red" data-go="sort">${esc(done?t("cont"):t("startSort"))} →</button><button class="btn" data-go="lib">${esc(t("browse"))}</button></div>
       ${done?`<div class="prog" style="margin-top:20px;max-width:420px"><div class="track"><i style="width:${done/TOTAL*100}%"></i></div><span>${done} ${t("of")} ${TOTAL} ${t("rated")}</span></div>`:""}
       <p class="priv">${IC.lock}<span>${esc(t("privacy"))}</span></p>
       ${canStore?"":`<p class="warnbox" style="margin-top:14px">${esc(t("noStore"))}</p>`}
@@ -337,7 +337,7 @@ function copyText(txt,btn){const fb=()=>{const io=$("#io");if(io){io.value=txt;i
 document.addEventListener("click",e=>{
   const el=e.target.closest("button,[data-close]");if(!el)return;
   if(el.dataset.go){if(sess.openE)closeDetail();go(el.dataset.go);return}
-  if(el.dataset.about){const first=!D.about;D.about=1;save();go(first?"sort":"home");return}
+  if(el.dataset.about){D.about=1;save();go("home");return}
   if(el.dataset.lang){D.lang=el.dataset.lang;save();if(sess.openE)renderSheet();rerender();return}
   if(el.dataset.detail){openDetail(el.dataset.detail);return}
   if(el.hasAttribute("data-close")){closeDetail();return}

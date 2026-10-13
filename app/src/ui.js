@@ -120,13 +120,13 @@ function today() {
   } else if (my.length) {
     focus = `<p class="cl-name">${esc(t("focusT"))}</p><p>${esc(t("focusPick"))}</p><div class="pickchips">${my.map(v => `<button class="pchip ${x.focus === v.e ? "on" : ""}" data-x="focus" data-e="${esc(v.e)}">${A.sign(v, "csign")}${esc(A.nm(v))}</button>`).join("")}</div>${fv ? `<p><button class="btn small ghost" data-x="pickfocus">${esc(t("cancel"))}</button></p>` : ""}`;
   } else {
-    focus = `<p class="cl-name">${esc(t("focusT"))}</p><h2>${esc(t("startT"))}</h2><p class="muted">${esc(t("startP"))}</p><p><button class="btn red" data-go="sort">${esc(t("start"))} →</button></p>`;
+    focus = `<p class="cl-name">${esc(t("focusT"))}</p><h2>${esc(t("startT"))}</h2><p class="muted">${esc(t("startP"))}</p><p><button class="btn red" data-go="sort">${esc(t("startSort"))} →</button></p>`;
   }
   const worked = my.filter(v => A.workN(v.e) === 3).length;
   const progress = `<section class="card"><h3 class="ch">${esc(t("progressT"))}</h3>
     <div class="prog"><div class="track"><i style="width:${(done / A.TOTAL) * 100}%"></i></div><span>${done} ${t("of")} ${A.TOTAL} ${t("sorted")}</span></div>
     <div class="stats"><span><b>${my.length}</b> / 12 ${esc(t("mineN"))}</span><span><b>${worked}</b> / ${my.length || 0} ${esc(t("workedN"))}</span></div>
-    ${c[0] ? `<p><button class="btn small" data-go="sort">${esc(t("contSort"))} →</button></p>` : ""}</section>`;
+    ${c[0] && done ? `<p><button class="btn small" data-go="sort">${esc(t("contSort"))} →</button></p>` : ""}</section>`;
   let checkCard = "";
   if (my.length) {
     const st = checkState();
