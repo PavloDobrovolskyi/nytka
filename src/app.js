@@ -189,14 +189,24 @@ const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`
 /* ---------- about: what the project is ---------- */
 function about(){
   const started=TOTAL-counts()[0]>0;
-  $("#view").innerHTML=`<section class="about">
+  $("#view").innerHTML=`<section class="about"><div class="about-txt">
     ${sign({e:"Nytka",c:"freedom"},"about-sign",true)}
     <p class="eyebrow">${esc(t("aboutEyebrow"))}</p>
     <h1>${esc(t("brand"))}</h1>
     ${t("aboutP").map(x=>`<p class="about-p">${esc(x)}</p>`).join("")}
     <p class="about-small">${esc(t("aboutSmall"))}</p>
     <button class="btn red about-go" data-about="go">${esc(started?t("aboutCont"):t("aboutGo"))} →</button>
-  </section>`;
+  </div>${aboutArt()}</section>`;
+}
+/* велике полотно для широкого екрана: знак «вишивається» від центру, а з останнього хрестика тягнеться нитка */
+function aboutArt(){
+  const U=10,O=2,p=2,list=cells("Nytka").slice().sort((a,b)=>Math.hypot(a[0]-5,a[1]-5)-Math.hypot(b[0]-5,b[1]-5));
+  const st=list.map(([x,y,val],i)=>{const X=(x+O)*U,Y=(y+O)*U;
+    return `<path class="st" style="stroke:${val===1?"var(--ink)":"var(--th-red)"};animation-delay:${180+i*32}ms" d="M${X+p} ${Y+p}L${X+U-p} ${Y+U-p}M${X+U-p} ${Y+p}L${X+p} ${Y+U-p}"/>`}).join("");
+  const [lx,ly]=list.reduce((m,c)=>c[1]>m[1]||(c[1]===m[1]&&c[0]>m[0])?c:m);
+  const sx=(lx+O)*U+U/2,sy=(ly+O)*U+U-p;
+  const thread=`<path class="thread" pathLength="1" style="animation-delay:${280+list.length*32}ms" d="M${sx} ${sy}C${sx+6} ${sy+22} ${sx+40} ${sy+8} ${sx+52} ${sy+26}S${sx+62} ${sy+40} 158 ${sy+36}"/>`;
+  return `<div class="about-art" aria-hidden="true"><svg viewBox="0 0 150 150"><defs><pattern id="aida" width="10" height="10" patternUnits="userSpaceOnUse" x="-1" y="-1"><circle cx="1" cy="1" r=".9"/></pattern></defs><rect x="5" y="5" width="140" height="140" fill="url(#aida)"/><g fill="none" stroke-linecap="round" stroke-width="2.6">${st}${thread}</g></svg></div>`;
 }
 
 /* ---------- sort ---------- */
