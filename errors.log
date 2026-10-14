@@ -1,0 +1,8 @@
+60:Note: Some input files use unchecked or unsafe operations.
+61:Note: Recompile with -Xlint:unchecked for details.
+62-
+63-> Task :app:preBuild UP-TO-DATE
+64-> Task :app:preDebugBuild UP-TO-DATE
+65-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+66-> Task :app:javaPreCompileDebug
+67-> Task :capacitor-android:bundleLibCompileToJarDebug
