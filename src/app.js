@@ -26,8 +26,8 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gapT:"Важливо для мене ↔ як я живу зараз",gapHint:"Тут порівнюються дві оцінки з карток твоїх цінностей: наскільки цінність для тебе важлива і наскільки ти зараз за нею живеш. Угорі — найбільші розриви: там у житті бракує чогось важливого, і це добра тема для розмови з психотерапевтом. Мінус означає, що ти живеш за цінністю менше, ніж вона для тебе важить. Плюс — що віддаєш їй більше.",
  gapLeg:["наскільки важливо","наскільки живу за нею зараз"],gapEmpty:"Відкрий будь-яку цінність зі списку «Моє» і внизу картки посунь обидва повзунки: «Наскільки це важливо для мене» і «Наскільки я зараз за цим живу». Тут з'явиться порівняння.",
  sumT:"Підсумок",sumHint:"Текст, який можна скопіювати і показати терапевту чи зберегти в нотатках.",copy:"Скопіювати",copied:"Скопійовано",
- backupT:"Резервна копія",backupHint:"Дані живуть у цьому браузері. Щоб перенести на інший пристрій, скопіюй код і встав його там.",
- exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав сюди код з іншого пристрою…",outPh:"Тут з'явиться код",copiedCode:"Код скопійовано. Збережи його в нотатках або надішли собі.",copyManual:"Не вдалося скопіювати автоматично. Код виділено, скопіюй його вручну.",codeOk:(m,r)=>`✓ Код розпізнано: ${m} у «Моє», ${r} оцінено. Поточні позначки буде замінено.`,imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле нижче.",
+ backupT:"Резервна копія",backupHint:"Дані живуть у цьому браузері. Щоб перенести їх на інший пристрій, згенеруй і скопіюй код, а там встав його в нижнє поле.",
+ genB:"Згенерувати код",exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав сюди код з іншого пристрою…",outPh:"Натисни «Згенерувати код», і він з'явиться тут",copiedCode:"Код скопійовано. Збережи його в нотатках або надішли собі.",copyManual:"Не вдалося скопіювати автоматично. Код виділено, скопіюй його вручну.",codeOk:(m,r)=>`✓ Код розпізнано: ${m} у «Моє», ${r} оцінено. Поточні позначки буде замінено.`,imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле вище.",
  wipe:"Стерти все",wipeAsk:"Натисни ще раз, щоб стерти всі дані",
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
@@ -57,8 +57,8 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gapT:"What matters to me ↔ how I live now",gapHint:"This compares two ratings from your value cards: how important a value is to you and how much you live by it right now. The biggest gaps are at the top: something important is missing from your life there, and it's a good topic to bring to your psychotherapist. A minus means you live by the value less than it matters to you. A plus means you give it more.",
  gapLeg:["how important","how much I live by it now"],gapEmpty:"Open any value in your “Mine” list and move both sliders at the bottom of the card: “How important this is to me” and “How much I live by it now”. The comparison will appear here.",
  sumT:"Summary",sumHint:"Text you can copy and share with your therapist or keep in your notes.",copy:"Copy",copied:"Copied",
- backupT:"Backup",backupHint:"Your data lives in this browser. To move it to another device, copy the code and paste it there.",
- exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code from your other device here…",outPh:"Your code will appear here",copiedCode:"Code copied. Keep it in your notes or send it to yourself.",copyManual:"Couldn't copy automatically. The code is selected, copy it manually.",codeOk:(m,r)=>`✓ Code recognised: ${m} in “Mine”, ${r} rated. Your current marks will be replaced.`,imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field below first.",
+ backupT:"Backup",backupHint:"Your data lives in this browser. To move it to another device, generate and copy the code, then paste it into the lower field there.",
+ genB:"Generate code",exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code from your other device here…",outPh:"Tap “Generate code” and it will appear here",copiedCode:"Code copied. Keep it in your notes or send it to yourself.",copyManual:"Couldn't copy automatically. The code is selected, copy it manually.",codeOk:(m,r)=>`✓ Code recognised: ${m} in “Mine”, ${r} rated. Your current marks will be replaced.`,imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field above first.",
  wipe:"Erase everything",wipeAsk:"Tap again to erase all data",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
@@ -324,26 +324,23 @@ function mine(){
    <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
   </section>
   ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
-   <div class="bk"><button class="btn small primary" id="exp">${esc(t("exportB"))}</button>
-    <textarea class="io out" id="ioOut" readonly placeholder="${esc(t("outPh"))}" aria-label="${esc(t("outPh"))}"></textarea>
+   <div class="bk"><textarea class="io out" id="ioOut" readonly placeholder="${esc(t("outPh"))}" aria-label="${esc(t("outPh"))}"></textarea>
+    <button class="btn small primary" id="exp">${esc(t("genB"))}</button>
     <p class="note-ok" id="expMsg" role="status"></p></div>
-   <div class="bk"><button class="btn small" id="impCode">${esc(t("importB"))}</button>
-    <textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+   <div class="bk"><textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    <button class="btn small" id="impCode">${esc(t("importB"))}</button>
     <p class="note-ok" id="ioMsg" role="status"></p></div>
    <div class="tools wipe-row"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div>
   </section>`}${foot()}`;
-  if(!H.backupPanel)prepCode();
 }
 /* ---------- код резервної копії ----------
    NYTKA2: стиснутий (deflate) — у 10–20 разів коротший, тож не ріжеться месенджерами на кілька повідомлень.
    NYTKA1: старий формат без стиснення — далі приймається при відновленні. */
 const toB64=u=>{let s="";for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
 const streamTo=(data,tr)=>new Response(new Blob([data]).stream().pipeThrough(tr));
-function prepCode(){
-  const json=JSON.stringify(D.st);if(!window.CompressionStream||(sess.code&&sess.code.json===json))return;
-  streamTo(json,new CompressionStream("deflate")).arrayBuffer().then(b=>{sess.code={json,c:"NYTKA2:"+toB64(new Uint8Array(b))}}).catch(()=>{});
-}
-function exportCode(){const json=JSON.stringify(D.st);return sess.code&&sess.code.json===json?sess.code.c:"NYTKA1:"+toB64(new TextEncoder().encode(json))}
+async function makeCode(){const json=JSON.stringify(D.st);
+  try{if(window.CompressionStream)return "NYTKA2:"+toB64(new Uint8Array(await streamTo(json,new CompressionStream("deflate")).arrayBuffer()))}catch(e){}
+  return "NYTKA1:"+toB64(new TextEncoder().encode(json))}
 async function readCode(raw){
   const s=String(raw||"").replace(/[\s\u00a0\u200b-\u200d\u2060\ufeff]/g,"");
   const m=s.match(/nytka([12]):([A-Za-z0-9+\/=_%-]+)/i);if(!m)throw 0;
@@ -383,9 +380,12 @@ function selectAll(el){if(!el)return;if(el.select){el.focus();el.select();try{el
   else{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
 function copyText(txt,btn,field,done){const fb=()=>{selectAll(field);if(done)done(false)};
   try{navigator.clipboard.writeText(txt).then(()=>{if(btn){btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)}if(done)done(true)},fb)}catch(e){fb()}}
-function copyCode(btn){const out=$("#ioOut");if(!out)return;if(btn)btn.dataset.l=t("exportB");
-  const code=exportCode();out.value=code;
-  copyText(code,btn,out,ok=>{const m=$("#expMsg");if(m){m.textContent=t(ok?"copiedCode":"copyManual");m.className="note-ok "+(ok?"good":"")}})}
+/* «Згенерувати код» → код з'являється в полі, кнопка стає «Скопіювати код» */
+async function genCode(btn){const out=$("#ioOut");if(!out)return;btn.disabled=true;
+  out.value=await makeCode();btn.disabled=false;btn.textContent=btn.dataset.l=t("exportB");btn.dataset.ready="1";
+  const m=$("#expMsg");if(m){m.textContent="";m.className="note-ok"}}
+function copyCode(btn){const out=$("#ioOut");if(!out||!out.value)return;
+  copyText(out.value,btn,out,ok=>{const m=$("#expMsg");if(m){m.textContent=t(ok?"copiedCode":"copyManual");m.className="note-ok "+(ok?"good":"")}})}
 
 /* ---------- events ---------- */
 document.addEventListener("touchstart",()=>{},{passive:true}); // щоб на iPhone працював :active (натиск)
@@ -407,7 +407,7 @@ document.addEventListener("click",e=>{
   if(el.dataset.top){const s=S(el.dataset.top);setS(el.dataset.top,{top:!s.top});mine();return}
   if(el.dataset.promote){setS(el.dataset.promote,{s:2});shell();mine();return}
   if(el.id==="copySum"){el.dataset.l=t("copy");copyText(summary(),el,$("#sum"));return}
-  if(el.id==="exp"){copyCode(el);return}
+  if(el.id==="exp"){if(el.dataset.ready)copyCode(el);else genCode(el);return}
   if(el.id==="impCode"){restoreCode();return}
   if(el.id==="wipe"){if(!sess.armed){sess.armed=true;$("#wipeMsg").textContent=t("wipeAsk");setTimeout(()=>{sess.armed=false;const m=$("#wipeMsg");if(m)m.textContent=""},3500);return}
     sess.armed=false;D.st={};sess.hist=[];if(H.onWipe)H.onWipe();save();shell();mine();return}
