@@ -280,6 +280,8 @@ main{padding-block:28px 40px}
 .io.out:placeholder-shown{cursor:default}
 .bk .note-ok{margin:0}.bk .note-ok:empty{display:none}
 .note-ok.good{color:var(--th-green)}.note-ok.bad{color:var(--red)}
+/* iPhone наближає сторінку, якщо в полі вводу шрифт менший за 16px — на сенсорних екранах робимо 16px */
+@media (pointer:coarse){.io,.search,.fld textarea{font-size:16px}.io.out{font-size:16px;line-height:1.4}}
 .foot{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 20px}
 .foot .links{display:flex;gap:16px;margin-left:auto}
 .foot a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
