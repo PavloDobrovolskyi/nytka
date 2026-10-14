@@ -1,0 +1,72 @@
+# Стабільні версії «Нитки».
+# Як зафіксувати нову стабільну версію:
+#   1) у main оновити release/VERSION (наприклад 1.1.0) і release/notes.md;
+#   2) відправити main у гілку stable:  git push origin main:stable
+# Ця дія ставить тег vX.Y.Z на цей коміт, збирає APK для Android і створює реліз «Latest».
+# Якщо реліз з такою версією вже є, нічого не змінюється (щоб випадково не перезаписати стабільну версію).
+name: Stable release
+
+on:
+  push:
+    branches: [stable]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stable-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: v
+        run: |
+          V=$(tr -d ' \r\n' < release/VERSION)
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          if gh release view "v$V" >/dev/null 2>&1; then
+            echo "exists=1" >> "$GITHUB_OUTPUT"
+            echo "::notice::Реліз v$V уже існує — пропускаю. Щоб зафіксувати нову версію, зміни release/VERSION."
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.v.outputs.exists != '1'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: actions/setup-java@v4
+        if: steps.v.outputs.exists != '1'
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build Android APK
+        if: steps.v.outputs.exists != '1'
+        working-directory: app
+        run: |
+          npm ci --no-audit --no-fund
+          node ../build.js app
+          npx cap sync android
+          cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+
+      - name: Create release
+        if: steps.v.outputs.exists != '1'
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          APK="$RUNNER_TEMP/nytka-$V-android-test.apk"
+          cp app/android/app/build/outputs/apk/debug/app-debug.apk "$APK"
+          { cat release/notes.md; echo; echo "---"; echo "Коміт: \`${GITHUB_SHA::7}\` · зібрано $(date -u +%F)"; } > "$RUNNER_TEMP/notes.md"
+          gh release create "v$V" "$APK" \
+            --target "$GITHUB_SHA" \
+            --title "Нитка $V — стабільна версія" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --latest
