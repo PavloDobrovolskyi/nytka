@@ -27,7 +27,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gapLeg:["наскільки важливо","наскільки живу за нею зараз"],gapEmpty:"Відкрий будь-яку цінність зі списку «Моє» і внизу картки посунь обидва повзунки: «Наскільки це важливо для мене» і «Наскільки я зараз за цим живу». Тут з'явиться порівняння.",
  sumT:"Підсумок",sumHint:"Текст, який можна скопіювати і показати терапевту чи зберегти в нотатках.",copy:"Скопіювати",copied:"Скопійовано",
  backupT:"Резервна копія",backupHint:"Дані живуть у цьому браузері. Щоб перенести на інший пристрій, скопіюй код і встав його там.",
- exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав код сюди…",imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле вище.",
+ exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав сюди код з іншого пристрою…",outPh:"Тут з'явиться код",copiedCode:"Код скопійовано. Збережи його в нотатках або надішли собі.",copyManual:"Не вдалося скопіювати автоматично. Код виділено, скопіюй його вручну.",codeOk:(m,r)=>`✓ Код розпізнано: ${m} у «Моє», ${r} оцінено. Поточні позначки буде замінено.`,imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле нижче.",
  wipe:"Стерти все",wipeAsk:"Натисни ще раз, щоб стерти всі дані",
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
@@ -58,7 +58,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gapLeg:["how important","how much I live by it now"],gapEmpty:"Open any value in your “Mine” list and move both sliders at the bottom of the card: “How important this is to me” and “How much I live by it now”. The comparison will appear here.",
  sumT:"Summary",sumHint:"Text you can copy and share with your therapist or keep in your notes.",copy:"Copy",copied:"Copied",
  backupT:"Backup",backupHint:"Your data lives in this browser. To move it to another device, copy the code and paste it there.",
- exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code here…",imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field above first.",
+ exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code from your other device here…",outPh:"Your code will appear here",copiedCode:"Code copied. Keep it in your notes or send it to yourself.",copyManual:"Couldn't copy automatically. The code is selected, copy it manually.",codeOk:(m,r)=>`✓ Code recognised: ${m} in “Mine”, ${r} rated. Your current marks will be replaced.`,imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field below first.",
  wipe:"Erase everything",wipeAsk:"Tap again to erase all data",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
@@ -324,9 +324,12 @@ function mine(){
    <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
   </section>
   ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
-   <div class="tools"><button class="btn small" id="exp">${esc(t("exportB"))}</button></div>
-   <textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
-   <div class="tools"><button class="btn small" id="impCode">${esc(t("importB"))}</button><span class="note-ok" id="ioMsg" role="status"></span></div>
+   <div class="bk"><button class="btn small primary" id="exp">${esc(t("exportB"))}</button>
+    <textarea class="io out" id="ioOut" readonly placeholder="${esc(t("outPh"))}" aria-label="${esc(t("outPh"))}"></textarea>
+    <p class="note-ok" id="expMsg" role="status"></p></div>
+   <div class="bk"><button class="btn small" id="impCode">${esc(t("importB"))}</button>
+    <textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    <p class="note-ok" id="ioMsg" role="status"></p></div>
    <div class="tools wipe-row"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div>
   </section>`}${foot()}`;
   if(!H.backupPanel)prepCode();
@@ -352,11 +355,18 @@ async function readCode(raw){
   const out={};Object.keys(st).forEach(k=>{if(BY[k]&&st[k]&&typeof st[k]==="object")out[k]=st[k]});
   return out;
 }
+async function checkCode(){
+  const io=$("#io"),m=$("#ioMsg");if(!io||!m)return;const raw=io.value.trim();
+  if(!raw){m.textContent="";m.className="note-ok";return}
+  try{const st=await readCode(raw);if(io.value.trim()!==raw)return;const v=Object.values(st);
+    m.textContent=t("codeOk")(v.filter(x=>x.s===2).length,v.filter(x=>x.s>0).length);m.className="note-ok good"}
+  catch(x){if(io.value.trim()===raw){m.textContent=t("badCode");m.className="note-ok bad"}}
+}
 async function restoreCode(){
-  const io=$("#io"),raw=((io&&io.value)||"").trim(),say=k=>{const m=$("#ioMsg");if(m)m.textContent=t(k)};
+  const io=$("#io"),raw=((io&&io.value)||"").trim(),say=(k,c)=>{const m=$("#ioMsg");if(m){m.textContent=t(k);m.className="note-ok "+(c||"")}};
   if(!raw){say("pasteFirst");if(io)io.focus();return}
-  let st;try{st=await readCode(raw)}catch(x){say("badCode");return}
-  D.st=st;save();shell();mine();say("imported");
+  let st;try{st=await readCode(raw)}catch(x){say("badCode","bad");return}
+  D.st=st;save();shell();mine();say("imported","good");
 }
 function summary(){
   const my=V.filter(v=>S(v.e).s===2);if(!my.length)return t("emptyMine");
@@ -369,12 +379,18 @@ function summary(){
   if(rest.length)o+=(top.length?t("sumRest"):t("mineList"))+"\n"+rest.map(line).join("\n");
   return o.trim();
 }
-function copyText(txt,btn){const fb=()=>{const io=$("#io");if(io){io.value=txt;io.select()}};
-  try{navigator.clipboard.writeText(txt).then(()=>{btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)},fb)}catch(e){fb()}}
+function selectAll(el){if(!el)return;if(el.select){el.focus();el.select();try{el.setSelectionRange(0,el.value.length)}catch(e){}}
+  else{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
+function copyText(txt,btn,field,done){const fb=()=>{selectAll(field);if(done)done(false)};
+  try{navigator.clipboard.writeText(txt).then(()=>{if(btn){btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)}if(done)done(true)},fb)}catch(e){fb()}}
+function copyCode(btn){const out=$("#ioOut");if(!out)return;if(btn)btn.dataset.l=t("exportB");
+  const code=exportCode();out.value=code;
+  copyText(code,btn,out,ok=>{const m=$("#expMsg");if(m){m.textContent=t(ok?"copiedCode":"copyManual");m.className="note-ok "+(ok?"good":"")}})}
 
 /* ---------- events ---------- */
 document.addEventListener("touchstart",()=>{},{passive:true}); // щоб на iPhone працював :active (натиск)
 document.addEventListener("click",e=>{
+  if(e.target.id==="ioOut"&&e.target.value){selectAll(e.target);copyCode(null);return}
   const el=e.target.closest("button,[data-close]");if(!el)return;
   if(el.dataset.go){if(sess.openE)closeDetail();go(el.dataset.go);return}
   if(el.dataset.about){D.about=1;save();go("home");return}
@@ -390,8 +406,8 @@ document.addEventListener("click",e=>{
   if(el.dataset.lc){sess.lc=el.dataset.lc;document.querySelectorAll("[data-lc]").forEach(b=>b.setAttribute("aria-pressed",String(b===el)));libList();return}
   if(el.dataset.top){const s=S(el.dataset.top);setS(el.dataset.top,{top:!s.top});mine();return}
   if(el.dataset.promote){setS(el.dataset.promote,{s:2});shell();mine();return}
-  if(el.id==="copySum"){el.dataset.l=t("copy");copyText(summary(),el);return}
-  if(el.id==="exp"){el.dataset.l=t("exportB");const code=exportCode();$("#io").value=code;copyText(code,el);return}
+  if(el.id==="copySum"){el.dataset.l=t("copy");copyText(summary(),el,$("#sum"));return}
+  if(el.id==="exp"){copyCode(el);return}
   if(el.id==="impCode"){restoreCode();return}
   if(el.id==="wipe"){if(!sess.armed){sess.armed=true;$("#wipeMsg").textContent=t("wipeAsk");setTimeout(()=>{sess.armed=false;const m=$("#wipeMsg");if(m)m.textContent=""},3500);return}
     sess.armed=false;D.st={};sess.hist=[];if(H.onWipe)H.onWipe();save();shell();mine();return}
@@ -399,6 +415,7 @@ document.addEventListener("click",e=>{
 document.addEventListener("input",e=>{
   const el=e.target;
   if(el.id==="q"){sess.lq=el.value;libList();return}
+  if(el.id==="io"){checkCode();return}
   if(!sess.openE)return;
   if(el.id==="imp"||el.id==="liv"){const v=+el.value;setS(sess.openE,{[el.id]:v});$("#o-"+el.id).textContent=v;$("#w-"+el.id).classList.remove("unset");updTrk();return}
   if(el.id==="note"||el.id==="ex"){setS(sess.openE,{[el.id]:el.value});updTrk();return}
