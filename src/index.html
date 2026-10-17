@@ -276,12 +276,17 @@ main{padding-block:28px 40px}
 .bk{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px}
 .bk+.bk{margin-top:24px}
 .bk .io{margin-top:0}
-.io.out{background:var(--bg);border-style:dashed;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--muted);min-height:60px;resize:none;cursor:pointer}
-.io.out:placeholder-shown{cursor:default}
+.io.out{background:var(--bg);border-style:dashed;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.45;color:var(--muted);min-height:60px;max-height:7.4em;overflow:hidden;word-break:break-all;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.io.out:empty{-webkit-mask-image:none;mask-image:none}
+.io.out:empty::before{content:attr(data-ph);font-family:var(--f-b,inherit);word-break:normal}
 .bk .note-ok{margin:0}.bk .note-ok:empty{display:none}
 .note-ok.good{color:var(--th-green)}.note-ok.bad{color:var(--red)}
 /* iPhone наближає сторінку, якщо в полі вводу шрифт менший за 16px — на сенсорних екранах робимо 16px */
-@media (pointer:coarse){.io,.search,.fld textarea{font-size:16px}.io.out{font-size:16px;line-height:1.4}}
+@media (pointer:coarse){.io,.search,.fld textarea{font-size:16px}.io.out{font-size:13px}}
+/* захист від копіювання: виділяти можна тільки в полях вводу */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+img,svg{-webkit-user-drag:none}
 .foot{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 20px}
 .foot .links{display:flex;gap:16px;margin-left:auto}
 .foot a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}

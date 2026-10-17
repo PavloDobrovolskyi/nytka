@@ -27,7 +27,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gapLeg:["наскільки важливо","наскільки живу за нею зараз"],gapEmpty:"Відкрий будь-яку цінність зі списку «Моє» і внизу картки посунь обидва повзунки: «Наскільки це важливо для мене» і «Наскільки я зараз за цим живу». Тут з'явиться порівняння.",
  sumT:"Підсумок",sumHint:"Текст, який можна скопіювати і показати терапевту чи зберегти в нотатках.",copy:"Скопіювати",copied:"Скопійовано",
  backupT:"Резервна копія",backupHint:"Дані живуть у цьому браузері. Щоб перенести їх на інший пристрій, згенеруй і скопіюй код, а там встав його в нижнє поле.",
- genB:"Згенерувати код",exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав сюди код з іншого пристрою…",outPh:"Натисни «Згенерувати код», і він з'явиться тут",copiedCode:"Код скопійовано. Збережи його в нотатках або надішли собі.",copyManual:"Не вдалося скопіювати автоматично. Код виділено, скопіюй його вручну.",codeOk:(m,r)=>`✓ Код розпізнано: ${m} у «Моє», ${r} оцінено. Поточні позначки буде замінено.`,imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле вище.",
+ genB:"Згенерувати код",exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав сюди код з іншого пристрою…",outPh:"Натисни «Згенерувати код», і він з'явиться тут",copiedCode:"Код скопійовано. Збережи його в нотатках або надішли собі.",copyManual:"Цей браузер не дав скопіювати код. Відкрий сайт у Safari чи Chrome і спробуй ще раз.",codeOk:(m,r)=>`✓ Код розпізнано: ${m} у «Моє», ${r} оцінено. Поточні позначки буде замінено.`,imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле вище.",
  wipe:"Стерти все",wipeAsk:"Натисни ще раз, щоб стерти всі дані",
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
  noStore:"Браузер не дозволяє зберігати дані — позначки зникнуть після закриття сторінки. Скористайся резервною копією.",
@@ -58,7 +58,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gapLeg:["how important","how much I live by it now"],gapEmpty:"Open any value in your “Mine” list and move both sliders at the bottom of the card: “How important this is to me” and “How much I live by it now”. The comparison will appear here.",
  sumT:"Summary",sumHint:"Text you can copy and share with your therapist or keep in your notes.",copy:"Copy",copied:"Copied",
  backupT:"Backup",backupHint:"Your data lives in this browser. To move it to another device, generate and copy the code, then paste it into the lower field there.",
- genB:"Generate code",exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code from your other device here…",outPh:"Tap “Generate code” and it will appear here",copiedCode:"Code copied. Keep it in your notes or send it to yourself.",copyManual:"Couldn't copy automatically. The code is selected, copy it manually.",codeOk:(m,r)=>`✓ Code recognised: ${m} in “Mine”, ${r} rated. Your current marks will be replaced.`,imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field above first.",
+ genB:"Generate code",exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code from your other device here…",outPh:"Tap “Generate code” and it will appear here",copiedCode:"Code copied. Keep it in your notes or send it to yourself.",copyManual:"This browser didn't allow copying. Open the site in Safari or Chrome and try again.",codeOk:(m,r)=>`✓ Code recognised: ${m} in “Mine”, ${r} rated. Your current marks will be replaced.`,imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field above first.",
  wipe:"Erase everything",wipeAsk:"Tap again to erase all data",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
  noStore:"This browser doesn't allow saving — marks will disappear when the page closes. Use the backup.",
@@ -324,7 +324,7 @@ function mine(){
    <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
   </section>
   ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
-   <div class="bk"><textarea class="io out" id="ioOut" readonly placeholder="${esc(t("outPh"))}" aria-label="${esc(t("outPh"))}"></textarea>
+   <div class="bk"><div class="io out" id="ioOut" role="status" data-ph="${esc(t("outPh"))}"></div>
     <button class="btn small primary" id="exp">${esc(t("genB"))}</button>
     <p class="note-ok" id="expMsg" role="status"></p></div>
    <div class="bk"><textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
@@ -376,21 +376,28 @@ function summary(){
   if(rest.length)o+=(top.length?t("sumRest"):t("mineList"))+"\n"+rest.map(line).join("\n");
   return o.trim();
 }
-function selectAll(el){if(!el)return;if(el.select){el.focus();el.select();try{el.setSelectionRange(0,el.value.length)}catch(e){}}
-  else{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
-function copyText(txt,btn,field,done){const fb=()=>{selectAll(field);if(done)done(false)};
-  try{navigator.clipboard.writeText(txt).then(()=>{if(btn){btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)}if(done)done(true)},fb)}catch(e){fb()}}
+/* запасний спосіб копіювання для старих браузерів і вбудованих браузерів месенджерів */
+function legacyCopy(txt){const ta=document.createElement("textarea");ta.value=txt;ta.setAttribute("readonly","");
+  ta.style.cssText="position:fixed;top:0;left:0;opacity:0;font-size:16px";document.body.appendChild(ta);ta.select();
+  try{ta.setSelectionRange(0,txt.length)}catch(e){}let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();return ok}
+function copyText(txt,btn,field,done){
+  const ok=()=>{if(btn){btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)}if(done)done(true)};
+  const fb=()=>{legacyCopy(txt)?ok():done&&done(false)};
+  try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}}
 /* «Згенерувати код» → код з'являється в полі, кнопка стає «Скопіювати код» */
 async function genCode(btn){const out=$("#ioOut");if(!out)return;btn.disabled=true;
-  out.value=await makeCode();btn.disabled=false;btn.textContent=btn.dataset.l=t("exportB");btn.dataset.ready="1";
+  out.textContent=await makeCode();btn.disabled=false;btn.textContent=btn.dataset.l=t("exportB");btn.dataset.ready="1";
   const m=$("#expMsg");if(m){m.textContent="";m.className="note-ok"}}
-function copyCode(btn){const out=$("#ioOut");if(!out||!out.value)return;
-  copyText(out.value,btn,out,ok=>{const m=$("#expMsg");if(m){m.textContent=t(ok?"copiedCode":"copyManual");m.className="note-ok "+(ok?"good":"")}})}
+function copyCode(btn){const out=$("#ioOut");if(!out||!out.textContent)return;
+  copyText(out.textContent,btn,out,ok=>{const m=$("#expMsg");if(m){m.textContent=t(ok?"copiedCode":"copyManual");m.className="note-ok "+(ok?"good":"")}})}
 
 /* ---------- events ---------- */
 document.addEventListener("touchstart",()=>{},{passive:true}); // щоб на iPhone працював :active (натиск)
+/* текст і зображення не виділяються й не копіюються; працюють тільки поля вводу (нотатки, пошук, поле для вставки коду).
+   Код резервної копії копіюється лише кнопкою. */
+const editable=n=>{const el=n&&(n.nodeType===3?n.parentElement:n);return !!(el&&el.closest&&el.closest("input,textarea"))};
+["copy","cut","selectstart","contextmenu","dragstart"].forEach(ev=>document.addEventListener(ev,e=>{if(!editable(e.target))e.preventDefault()}));
 document.addEventListener("click",e=>{
-  if(e.target.id==="ioOut"&&e.target.value){selectAll(e.target);copyCode(null);return}
   const el=e.target.closest("button,[data-close]");if(!el)return;
   if(el.dataset.go){if(sess.openE)closeDetail();go(el.dataset.go);return}
   if(el.dataset.about){D.about=1;save();go("home");return}

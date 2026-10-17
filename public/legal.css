@@ -33,3 +33,5 @@ section{scroll-margin-top:16px}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:var(--red);color:var(--on-red);font-weight:600;font-size:15.5px;line-height:1.2;text-decoration:none;transition:transform .15s}
 .btn:active{transform:scale(.97)}
 .btn:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+img,svg{-webkit-user-drag:none}
