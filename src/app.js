@@ -18,7 +18,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gq:["Коли я востаннє жив за цією цінністю?","Що мені заважає жити за нею більше?"],
  forMe:"Для мене",imp:"Наскільки це важливо для мене",liv:"Наскільки я зараз за цим живу",low:"зовсім ні",high:"дуже",
  noteL:"Що це значить для мене",exL:"Приклад з мого життя",notePh:"Своїми словами…",exPh:"Ситуація, де ця цінність проявилась або була порушена…",autosave:"Зберігається автоматично",trk:"Опрацьовано",trkN:{sc:"дві шкали",note:"що це значить для мене",ex:"приклад з життя"},worked:"опрацьовано",
- doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",
+ doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",shareB:"Поділитися «Ниткою»",shareMsg:"«Нитка» — простір для пошуку власних цінностей: 192 цінності з поясненнями. Безкоштовно і без реєстрації.",linkCopied:"Посилання скопійовано",shareHint:"Знаєш когось, кому це теж знадобиться?",
  allT:"Усі цінності",search:"Пошук: свобода, freedom…",all:"Усі",nothing:"Нічого не знайдено.",
  mineT:"Мої цінності",mineP:"Тут збирається все, що ти позначив. Ціль — 12 цінностей у «Моє», з них 5 найголовніших.",
  mineList:"Моє",maybeList:"Можливо",over:"Більше 12. Порівняй схожі і переведи частину в «Можливо».",
@@ -49,7 +49,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gq:["When did I last live by this value?","What stops me living by it more?"],
  forMe:"For me",imp:"How important this is to me",liv:"How much I live by it now",low:"not at all",high:"a lot",
  noteL:"What it means to me",exL:"An example from my life",notePh:"In your own words…",exPh:"A situation where this value showed up or was violated…",autosave:"Saved automatically",trk:"Worked through",trkN:{sc:"both scales",note:"what it means to me",ex:"example from life"},worked:"worked through",
- doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",
+ doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",shareB:"Share Nytka",shareMsg:"Nytka — a space to find your own values: 192 values with explanations. Free, no sign-up.",linkCopied:"Link copied",shareHint:"Know someone who might need this too?",
  allT:"All values",search:"Search: freedom, свобода…",all:"All",nothing:"Nothing found.",
  mineT:"My values",mineP:"Everything you've marked gathers here. The goal is 12 values in “Mine”, 5 of them the most important.",
  mineList:"Mine",maybeList:"Maybe",over:"More than 12. Compare similar ones and move some to “Maybe”.",
@@ -214,7 +214,7 @@ function nextTodo(){let v=V.find(x=>!S(x.e).s&&!sess.skipped.has(x.e));if(!v&&se
 function sort(anim){
   const c=counts(),done=TOTAL-c[0],v=nextTodo();
   const prog=`<div class="prog"><div class="track"><i style="width:${done/TOTAL*100}%"></i></div><span>${done} ${t("of")} ${TOTAL}</span></div>`;
-  if(!v){$("#view").innerHTML=`<div class="sort">${prog}<div class="done-card">${sign(BY["Inner Harmony"],"",true)}<h2>${esc(t("doneT"))}</h2><p class="muted">${esc(t("doneP"))}</p><p style="margin-top:20px"><button class="btn red" data-go="mine">${esc(t("toMine"))} →</button></p></div></div>`;return}
+  if(!v){$("#view").innerHTML=`<div class="sort">${prog}<div class="done-card">${sign(BY["Inner Harmony"],"",true)}<h2>${esc(t("doneT"))}</h2><p class="muted">${esc(t("doneP"))}</p><p style="margin-top:20px"><button class="btn red" data-go="mine">${esc(t("toMine"))} →</button></p><div class="share-row"><p class="muted">${esc(t("shareHint"))}</p><button class="btn" data-share>${esc(t("shareB"))}</button></div></div></div>`;return}
   const tl=D.lang==="uk"&&v.t?`<p class="tline">${esc(t("precise"))}: <b>${esc(v.t)}</b></p>`:"";
   $("#view").innerHTML=`<div class="sort">${prog}
    <article class="scard ${anim?"enter":""}" aria-live="polite">
@@ -321,7 +321,7 @@ function mine(){
   </section>
   ${H.mineExtra?H.mineExtra():""}<section class="panel"><h2>${esc(t("sumT"))}</h2><p class="hint">${esc(t("sumHint"))}</p>
    <pre class="summary" id="sum">${esc(summary())}</pre>
-   <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
+   <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}<button class="btn small" data-share>${esc(t("shareB"))}</button></div>
   </section>
   ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
    <div class="bk"><div class="io out" id="ioOut" role="status" data-ph="${esc(t("outPh"))}"></div>
@@ -384,6 +384,16 @@ function copyText(txt,btn,field,done){
   const ok=()=>{if(btn){btn.textContent=t("copied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)}if(done)done(true)};
   const fb=()=>{legacyCopy(txt)?ok():done&&done(false)};
   try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(e){fb()}}
+/* «Поділитися «Ниткою»»: ділимося лише посиланням на сайт, ніколи не даними людини */
+const SITE="https://nytka.life";
+async function shareSite(btn){
+  const text=t("shareMsg");
+  if(H.share){H.share(text,SITE);return}
+  if(navigator.share){try{await navigator.share({title:"Нитка",text,url:SITE});return}catch(e){if(e&&e.name==="AbortError")return}}
+  if(!btn.dataset.l)btn.dataset.l=btn.textContent;
+  const done=()=>{btn.textContent=t("linkCopied");setTimeout(()=>btn.textContent=btn.dataset.l,1800)};
+  try{await navigator.clipboard.writeText(text+" "+SITE);done()}catch(e){if(legacyCopy(text+" "+SITE))done()}
+}
 /* «Згенерувати код» → код з'являється в полі, кнопка стає «Скопіювати код» */
 async function genCode(btn){const out=$("#ioOut");if(!out)return;btn.disabled=true;
   out.textContent=await makeCode();btn.disabled=false;btn.textContent=btn.dataset.l=t("exportB");btn.dataset.ready="1";
@@ -413,6 +423,7 @@ document.addEventListener("click",e=>{
   if(el.dataset.lc){sess.lc=el.dataset.lc;document.querySelectorAll("[data-lc]").forEach(b=>b.setAttribute("aria-pressed",String(b===el)));libList();return}
   if(el.dataset.top){const s=S(el.dataset.top);setS(el.dataset.top,{top:!s.top});mine();return}
   if(el.dataset.promote){setS(el.dataset.promote,{s:2});shell();mine();return}
+  if(el.hasAttribute("data-share")){shareSite(el);return}
   if(el.id==="copySum"){el.dataset.l=t("copy");copyText(summary(),el,$("#sum"));return}
   if(el.id==="exp"){if(el.dataset.ready)copyCode(el);else genCode(el);return}
   if(el.id==="impCode"){restoreCode();return}

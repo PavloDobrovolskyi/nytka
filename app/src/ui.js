@@ -45,6 +45,7 @@ export function attach(api, hooks) {
   H.sheetExtra = v => `<section class="me xme" id="xme">${xme(v)}</section>`;
   H.mineExtra = mineExtra;
   H.sumTools = () => `<button class="btn small" data-x="pdf">${esc(t("pdfBtn"))}</button>`;
+  H.share = (text, url) => P.shareText(text + " " + url, "Нитка").then(r => r === "copied" && toast(A.t("linkCopied")));
   H.backupPanel = backupPanel;
   document.documentElement.classList.add("is-app", "is-" + P.platform);
   document.addEventListener("click", onClick, true);
