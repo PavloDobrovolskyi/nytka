@@ -36,7 +36,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  aboutEyebrow:"Простір для пошуку власних цінностей",
  aboutP:["«Нитка» — інструмент самопізнання для тих, хто хоче краще зрозуміти себе: самостійно або разом із психотерапевтом. Цінності — це те, що для тебе по-справжньому важливо: свобода, близькі, чесність, спокій. Вони, як нитка, проходять крізь усі твої рішення, навіть коли ти про них не думаєш.","Тут 192 цінності, кожна з поясненням, прикладом з життя і питаннями до себе. Ти сортуєш їх на «Моє», «Можливо» й «Ні», звужуєш до 12 найважливіших і дивишся, наскільки твоє життя зараз з ними збігається."],
  aboutSmall:"Без реєстрації: усе, що ти позначаєш і пишеш, лишається на твоєму пристрої.",
- aboutGo:"Почати",aboutCont:"Продовжити",supportL:"Підтримка",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
+ aboutGo:"Почати",aboutCont:"Продовжити",supportL:"Підтримка",helpL:"Допомога",prev:"Попередня",next:"Наступна",remove:"Прибрати з «Моє»"},
 en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  eyebrow:"192 values · Ukrainian and English",h1:"Find your <em>12</em> core values",
  lead:"Go through every value one card at a time, explore the ones that resonate, and narrow down to what matters most. Works on your own or alongside a therapist.",
@@ -67,7 +67,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  aboutEyebrow:"A space to find your own values",
  aboutP:["Nytka is a self-discovery tool for anyone who wants to understand themselves better, on their own or together with a psychotherapist. Values are what truly matters to you: freedom, the people close to you, honesty, calm. Like a thread, they run through all your decisions, even when you don't think about them.","There are 192 values here, each with an explanation, an example from life and questions for yourself. You sort them into “Mine”, “Maybe” and “No”, narrow down to the 12 that matter most, and see how closely your life matches them right now."],
  aboutSmall:"No sign-up: everything you mark and write stays on your device.",
- aboutGo:"Start",aboutCont:"Continue",supportL:"Support",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
+ aboutGo:"Start",aboutCont:"Continue",supportL:"Support",helpL:"Get help",prev:"Previous",next:"Next",remove:"Remove from “Mine”"}
 };
 const COL={freedom:"red",courage:"ochre",achieve:"plum",mastery:"indigo",mind:"teal",order:"green",integrity:"indigo",justice:"plum",security:"green",calm:"teal",joy:"ochre",people:"red"};
 
@@ -184,7 +184,7 @@ function home(){
   ${done?`<div class="stat-row">${[2,1,3].map(k=>`<span class="pill"><i style="background:var(--${k===2?"mine":k===1?"maybe":"no"})"></i>${esc(t("st")[k])} ${c[k]}</span>`).join("")}</div>`:""}
   ${foot()}`;
 }
-const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><button class="flink" data-go="about">${esc(t("aboutL"))}</button><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a></span></footer>`;
+const foot=()=>`<footer class="foot">${t("foot").map(x=>`<span>${esc(x)}</span>`).join("")}<span class="links"><button class="flink" data-go="about">${esc(t("aboutL"))}</button><a href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a href="support.html#${D.lang}">${esc(t("supportL"))}</a><a href="help.html#${D.lang}">${esc(t("helpL"))}</a></span></footer>`;
 
 /* ---------- about: what the project is ---------- */
 function about(){

@@ -369,7 +369,7 @@ function settings() {
    <section class="panel set"><h2>${esc(t("setAbout"))}</h2>
      <p class="kv"><span>${esc(t("version"))}</span><b>${esc(ui.ver || "1.0")}</b></p>
      <p class="kv"><span>${esc(t("contact"))}</span><b>nytka.ua@gmail.com</b></p>
-     <div class="tools"><button class="btn small" data-go="about">${esc(t("aboutL"))}</button><a class="btn small" href="privacy.html#${A.D.lang}">${esc(t("privacyL"))}</a><a class="btn small" href="support.html#${A.D.lang}">${esc(t("supportL"))}</a></div></section>`;
+     <div class="tools"><button class="btn small" data-go="about">${esc(t("aboutL"))}</button><a class="btn small" href="privacy.html#${A.D.lang}">${esc(t("privacyL"))}</a><a class="btn small" href="support.html#${A.D.lang}">${esc(t("supportL"))}</a><a class="btn small" href="help.html#${A.D.lang}">${esc(t("helpL"))}</a></div></section>`;
 }
 async function savePin() {
   const a = ($("#pin1") || {}).value || "", b = ($("#pin2") || {}).value || "", m = $("#pinmsg");
