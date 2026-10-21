@@ -19,7 +19,7 @@ defaults:
 
 concurrency:
   group: testflight
-  cancel-in-progress: false
+  cancel-in-progress: true   # у черзі лишається тільки найновіша зміна
 
 jobs:
   testflight:

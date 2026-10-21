@@ -74,6 +74,8 @@ jobs:
           git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}" ci-android
 
   ios:
+    # Лише вручну: на кожну зміну iOS збирає TestFlight, а macOS-машин на GitHub часто бракує
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
