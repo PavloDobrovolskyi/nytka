@@ -221,17 +221,43 @@ function sort(anim){
     <div class="sc-head">${sign(v,"",true)}<div><p class="cl-name">${esc(cName(v.c))}</p><h2>${esc(nm(v))}</h2><p class="sub">${esc(other(v))}</p></div></div>
     ${tl}<p>${esc(f(v,"m"))}</p>
     <div class="blk"><span class="lbl">${esc(t("life"))}</span><p>${esc(f(v,"l"))}</p></div>
-    <div class="blk q"><span class="lbl">${esc(t("ask"))}</span><p>${esc(f(v,"q"))}</p></div>
+    ${H.shortCard?`<div class="blk q"><span class="lbl">${esc(t("ask"))}</span><p>${esc(f(v,"q"))}</p></div>`:`
+    ${f(v,"d")?`<div class="blk d"><span class="lbl">${esc(t("confuse"))}</span><p>${esc(f(v,"d"))}</p></div>`:""}
+    ${f(v,"s")?`<div class="blk sh"><span class="lbl">${esc(t("shadow"))}</span><p>${esc(f(v,"s"))}</p></div>`:""}
+    <div class="blk q"><span class="lbl">${esc(t("questions"))}</span><ol><li>${esc(f(v,"q"))}</li>${t("gq").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>
+    ${f(v,"k")?`<div class="blk st"><span class="lbl">${esc(t("step"))}</span><p>${esc(f(v,"k"))}</p></div>`:""}`}
     <button class="more" data-detail="${esc(v.e)}">${esc(t("more"))} →</button>
    </article>
    <div class="choices">
-    <button class="c-mine" data-pick="2" data-e="${esc(v.e)}">${esc(t("st")[2])}</button>
-    <button class="c-maybe" data-pick="1" data-e="${esc(v.e)}">${esc(t("st")[1])}</button>
     <button class="c-no" data-pick="3" data-e="${esc(v.e)}">${esc(t("st")[3])}</button>
+    <button class="c-maybe" data-pick="1" data-e="${esc(v.e)}">${esc(t("st")[1])}</button>
+    <button class="c-mine" data-pick="2" data-e="${esc(v.e)}">${esc(t("st")[2])}</button>
    </div>
    <div class="sort-foot"><button data-undo ${sess.hist.length?"":"disabled"}>← ${esc(t("back"))}</button><button data-skip="${esc(v.e)}">${esc(t("skip"))} →</button></div>
   </div>`;
+  if(!H.ownSwipe)cardSwipe(v.e);
   if(H.afterRender)H.afterRender("sort");
+}
+/* свайп по картці на телефоні: вправо — «Моє», вліво — «Ні» */
+function cardSwipe(e){
+  const card=$(".scard");if(!card)return;
+  card.insertAdjacentHTML("beforeend",`<span class="stamp st-yes">${esc(t("st")[2])}</span><span class="stamp st-no">${esc(t("st")[3])}</span>`);
+  const yes=card.querySelector(".st-yes"),no=card.querySelector(".st-no"),LIM=100;
+  let sx=0,sy=0,dx=0,on=false,horiz=null;
+  const reset=()=>{card.style.transition="transform .2s ease";card.style.transform="";yes.style.opacity=no.style.opacity=0;setTimeout(()=>card.style.transition="",220)};
+  card.addEventListener("pointerdown",ev=>{if(ev.pointerType==="mouse"||ev.target.closest("button,a"))return;on=true;horiz=null;sx=ev.clientX;sy=ev.clientY;dx=0});
+  card.addEventListener("pointermove",ev=>{
+    if(!on)return;const mx=ev.clientX-sx,my=ev.clientY-sy;
+    if(horiz===null&&(Math.abs(mx)>8||Math.abs(my)>8)){horiz=Math.abs(mx)>Math.abs(my);if(horiz)card.setPointerCapture(ev.pointerId)}
+    if(!horiz)return;dx=mx;card.style.transform=`translateX(${dx}px) rotate(${dx/30}deg)`;
+    const k=Math.min(1,Math.abs(dx)/LIM);(dx>0?yes:no).style.opacity=k;(dx>0?no:yes).style.opacity=0;
+  });
+  card.addEventListener("pointerup",()=>{
+    if(!on)return;on=false;if(!horiz)return;if(Math.abs(dx)<LIM){reset();return}
+    card.style.transition="transform .18s ease-in, opacity .18s";card.style.transform=`translateX(${dx>0?130:-130}%) rotate(${dx>0?18:-18}deg)`;card.style.opacity=0;
+    setTimeout(()=>pick(e,dx>0?2:3),170);
+  });
+  card.addEventListener("pointercancel",()=>{on=false;reset()});
 }
 function pick(e,val){if(H.onPick)H.onPick(e,val);setS(e,{s:val});sess.hist.push(e);shell();sort(true)}
 

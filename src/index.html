@@ -142,6 +142,14 @@ main{padding-block:28px 40px}
 .scard p{margin:0}
 .blk .lbl,.sec h3{display:block;font-family:var(--f-b);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
 .blk.q p{font-style:italic}
+.blk ol{margin:0;padding-left:20px;font-style:italic}.blk ol li+li{margin-top:4px}
+.blk.d{border-left:3px solid var(--line);padding-left:12px}
+.blk.sh{background:var(--bg);border-radius:12px;padding:10px 12px}
+.blk.st p{font-weight:500}
+.scard{position:relative;touch-action:pan-y;will-change:transform}
+.stamp{position:absolute;top:18px;font-family:var(--f-d);font-weight:800;font-size:22px;padding:4px 12px;border:3px solid;border-radius:10px;opacity:0;pointer-events:none;background:var(--card);transform:rotate(-10deg)}
+.st-yes{left:18px;color:var(--red);border-color:var(--red)}
+.st-no{right:18px;color:var(--muted);border-color:var(--muted);transform:rotate(10deg)}
 .more{align-self:flex-start;font-weight:600;font-size:14.5px;border-bottom:1.5px solid var(--red);padding-bottom:1px}
 .choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .choices button{padding:15px 6px;border-radius:16px;font-weight:600;font-size:15.5px;border:1.5px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,background .15s,border-color .15s,color .15s}

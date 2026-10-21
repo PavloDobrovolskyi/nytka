@@ -40,6 +40,8 @@ export function attach(api, hooks) {
   Object.assign(H.views, { today, journal, prep, check, settings });
   H.afterRender = afterRender;
   H.onPick = () => P.haptic("light");
+  H.ownSwipe = true;   // свайпи на картці — свої (з вібрацією і підказкою)
+  H.shortCard = true;  // у застосунку картка сортування коротка, повний опис — у «Детальніше»
   H.onChange = onDataChange;
   H.onWipe = () => { A.D.x = blankX(); };
   H.sheetExtra = v => `<section class="me xme" id="xme">${xme(v)}</section>`;

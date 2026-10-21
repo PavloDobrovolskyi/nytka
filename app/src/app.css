@@ -123,3 +123,20 @@ html.locked header,html.locked main,html.locked nav.bottom{visibility:hidden}
 .swipe-hint{text-align:center;color:var(--muted);font-size:13.5px;margin:10px 0 0}
 
 .docbody .home{display:none} /* у застосунку документ закривається кнопкою зверху */
+
+/* перший екран «Про проєкт» у застосунку: мова праворуч, текст угорі, без прокрутки */
+.is-app.about-mode .top{background:transparent;border-bottom-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.is-app.about-mode .top .wrap{height:48px}
+.is-app.about-mode .lang{margin-left:auto}
+.is-app .about{justify-content:flex-start;min-height:0;margin:0 auto;padding:6px 0 calc(16px + env(safe-area-inset-bottom,0px))}
+.is-app .about-txt{gap:10px}
+.is-app .about-sign{width:52px;height:52px;margin:0}
+.is-app .about h1{font-size:44px}
+.is-app .about-p{font-size:15.5px;line-height:1.5}
+.is-app .about-small{font-size:13px}
+.is-app .about-go{margin-top:6px}
+@media (max-height:700px){.is-app .about-txt{gap:8px}.is-app .about-sign{width:40px;height:40px}.is-app .about h1{font-size:38px}.is-app .about-p{font-size:14.5px;line-height:1.45}}
+/* шапка: смуга під годинником і батареєю непрозора, щоб текст не просвічував під статус-баром */
+.is-app body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30;pointer-events:none}
+.is-app .top{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+.is-app.about-mode .top{background:var(--bg)}
