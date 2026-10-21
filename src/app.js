@@ -160,9 +160,7 @@ function shell(){
   $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}${k==="mine"&&c[2]?` aria-label="${esc(l)}: ${c[2]}"`:""}>${k==="mine"?mineIcon(c[2]):IC[k]}<span>${esc(l)}</span></button>`).join("");
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
-const navStack=[];let navReady=false;
-function goBack(){if(H.onBack&&H.onBack())return true;if(sess.openE){closeDetail();return true}const p=navStack.pop();if(p){go(p,false,true);return true}return false}
-function go(v,keepScroll,back){if(v==="home"&&H.home)v=H.home;if(navReady&&!back&&view!==v&&view!=="about"){navStack.push(view);if(navStack.length>30)navStack.shift()}navReady=true;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
+function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -227,51 +225,15 @@ function sort(anim){
     <button class="more" data-detail="${esc(v.e)}">${esc(t("more"))} →</button>
    </article>
    <div class="choices">
-    <button class="c-no" data-pick="3" data-e="${esc(v.e)}">${esc(t("st")[3])}</button>
-    <button class="c-maybe" data-pick="1" data-e="${esc(v.e)}">${esc(t("st")[1])}</button>
     <button class="c-mine" data-pick="2" data-e="${esc(v.e)}">${esc(t("st")[2])}</button>
+    <button class="c-maybe" data-pick="1" data-e="${esc(v.e)}">${esc(t("st")[1])}</button>
+    <button class="c-no" data-pick="3" data-e="${esc(v.e)}">${esc(t("st")[3])}</button>
    </div>
    <div class="sort-foot"><button data-undo ${sess.hist.length?"":"disabled"}>← ${esc(t("back"))}</button><button data-skip="${esc(v.e)}">${esc(t("skip"))} →</button></div>
   </div>`;
-  cardSwipe(v.e);
   if(H.afterRender)H.afterRender("sort");
 }
 function pick(e,val){if(H.onPick)H.onPick(e,val);setS(e,{s:val});sess.hist.push(e);shell();sort(true)}
-const SITE_SWIPE=()=>true;
-/* свайп зліва направо будь-де на сторінці — назад (закрити картку або попередня сторінка) */
-(()=>{let sx=0,sy=0,st=0,on=false;
- document.addEventListener("touchstart",e=>{on=false;if(!SITE_SWIPE()||e.touches.length!==1)return;const el=e.target.closest?e.target:e.target.parentElement;
-  if(el.closest(".scard,input,textarea,.chips,.gs,[data-noswipe]"))return;const t0=e.touches[0];sx=t0.clientX;sy=t0.clientY;st=Date.now();on=true},{passive:true});
- document.addEventListener("touchend",e=>{if(!on)return;on=false;const t0=e.changedTouches[0],dx=t0.clientX-sx,dy=Math.abs(t0.clientY-sy);
-  if(dx>80&&dy<dx*.5&&Date.now()-st<700)goBack()},{passive:true});
-})();
-function undo(){const e2=sess.hist.pop();if(e2){setS(e2,{s:0});shell();sort(true)}}
-/* свайп по картці: вправо — повернутися до попередньої; вліво — «Ні», якщо дозволено (H.swipeNo) */
-function cardSwipe(e){
-  const card=$(".scard");if(!card)return;
-  card.insertAdjacentHTML("beforeend",(H.swipeMine?`<span class="stamp st-back st-yes">${esc(t("st")[2])}</span>`:`<span class="stamp st-back">← ${esc(t("back"))}</span>`)+(H.swipeNo?`<span class="stamp st-no">${esc(t("st")[3])}</span>`:""));
-  const sb=card.querySelector(".st-back"),sn=card.querySelector(".st-no"),LIM=100;
-  let sx=0,sy=0,dx=0,on=false,horiz=null,buzz=false;
-  const ok=d=>d>0?(H.swipeMine||sess.hist.length>0||navStack.length>0):!!H.swipeNo;
-  const reset=()=>{card.style.transition="transform .2s ease";card.style.transform="";sb.style.opacity=0;if(sn)sn.style.opacity=0;setTimeout(()=>card.style.transition="",220)};
-  card.addEventListener("pointerdown",ev=>{if(ev.pointerType==="mouse"||ev.target.closest("button,a"))return;on=true;horiz=null;buzz=false;sx=ev.clientX;sy=ev.clientY;dx=0});
-  card.addEventListener("pointermove",ev=>{
-    if(!on)return;const mx=ev.clientX-sx,my=ev.clientY-sy;
-    if(horiz===null&&(Math.abs(mx)>8||Math.abs(my)>8)){horiz=Math.abs(mx)>Math.abs(my);if(horiz)card.setPointerCapture(ev.pointerId)}
-    if(!horiz)return;
-    dx=ok(mx)?mx:mx/5;card.style.transform=`translateX(${dx}px) rotate(${dx/30}deg)`;
-    const k=ok(mx)?Math.min(1,Math.abs(dx)/LIM):0;sb.style.opacity=dx>0?k:0;if(sn)sn.style.opacity=dx<0?k:0;
-    if(k>=1&&!buzz){buzz=true;if(H.onSwipeReady)H.onSwipeReady()}if(k<1)buzz=false;
-  });
-  card.addEventListener("pointerup",()=>{
-    if(!on)return;on=false;if(!horiz)return;
-    if(Math.abs(dx)<LIM||!ok(dx)){reset();return}
-    card.style.transition="transform .18s ease-in, opacity .18s";card.style.transform=`translateX(${dx>0?130:-130}%) rotate(${dx>0?18:-18}deg)`;card.style.opacity=0;
-    if(H.onSwipe)H.onSwipe(dx>0?(H.swipeMine?"mine":"back"):"no");
-    setTimeout(()=>dx>0?(H.swipeMine?pick(e,2):sess.hist.length?undo():goBack()):pick(e,3),170);
-  });
-  card.addEventListener("pointercancel",()=>{on=false;reset()});
-}
 
 /* ---------- library ---------- */
 function lib(){
@@ -455,7 +417,7 @@ document.addEventListener("click",e=>{
   if(el.dataset.nav){const i=+el.dataset.nav;if(V[i]){sess.openE=V[i].e;renderSheet()}return}
   if(el.dataset.set){const e2=sess.openE,k=+el.dataset.set;setS(e2,{s:S(e2).s===k?0:k});if(S(e2).s!==2)setS(e2,{top:false});renderSheet();shell();return}
   if(el.dataset.pick){pick(el.dataset.e,+el.dataset.pick);return}
-  if(el.hasAttribute("data-undo")){undo();return}
+  if(el.hasAttribute("data-undo")){const e2=sess.hist.pop();if(e2){setS(e2,{s:0});shell();sort(true)}return}
   if(el.dataset.skip){sess.skipped.add(el.dataset.skip);sort(true);return}
   if(el.dataset.lf!=null){sess.lf=el.dataset.lf;document.querySelectorAll("[data-lf]").forEach(b=>b.setAttribute("aria-pressed",String(b===el)));libList();return}
   if(el.dataset.lc){sess.lc=el.dataset.lc;document.querySelectorAll("[data-lc]").forEach(b=>b.setAttribute("aria-pressed",String(b===el)));libList();return}

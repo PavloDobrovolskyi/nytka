@@ -40,11 +40,6 @@ export function attach(api, hooks) {
   Object.assign(H.views, { today, journal, prep, check, settings });
   H.afterRender = afterRender;
   H.onPick = () => P.haptic("light");
-  H.swipeNo = true;
-  H.swipeMine = true;
-  H.onBack = () => { if (!$("#doc").hidden) { closeDoc(); return true; } return false; };
-  H.onSwipeReady = () => P.haptic("light");
-  H.onSwipe = () => { P.haptic("medium"); X().swipes++; };
   H.onChange = onDataChange;
   H.onWipe = () => { A.D.x = blankX(); };
   H.sheetExtra = v => `<section class="me xme" id="xme">${xme(v)}</section>`;
@@ -437,11 +432,35 @@ async function openDoc(href) {
 }
 function closeDoc() { $("#doc").hidden = true; $("#doc").innerHTML = ""; }
 
-/* ================= свайпи на картці сортування =================
-   Сам жест — у спільному коді (cardSwipe): вправо — назад, вліво — «Ні». Тут лише підказка і вібрація. */
+/* ================= свайпи на картці сортування ================= */
 function swipes() {
+  const card = $(".scard"); if (!card || card.dataset.sw) return;
+  card.dataset.sw = "1";
   const x = X();
-  if (x.swipes < 3 && !$(".swipe-hint")) { const f = $(".sort-foot"); if (f) f.insertAdjacentHTML("afterend", `<p class="swipe-hint">${esc(t("swipeHint"))}</p>`); }
+  if (x.swipes < 3) { const f = $(".sort-foot"); if (f) f.insertAdjacentHTML("afterend", `<p class="swipe-hint">${esc(t("swipeHint"))}</p>`); }
+  card.insertAdjacentHTML("beforeend", `<span class="stamp st-yes">${esc(t("st")[2])}</span><span class="stamp st-no">${esc(t("st")[3])}</span>`);
+  let sx = 0, sy = 0, dx = 0, on = false, horiz = null, buzzed = false;
+  const yes = card.querySelector(".st-yes"), no = card.querySelector(".st-no");
+  const reset = () => { card.style.transition = "transform .2s ease"; card.style.transform = ""; yes.style.opacity = no.style.opacity = 0; setTimeout(() => (card.style.transition = ""), 220); };
+  card.addEventListener("pointerdown", e => { if (e.button > 0 || e.target.closest("button,a")) return; on = true; horiz = null; buzzed = false; sx = e.clientX; sy = e.clientY; dx = 0; });
+  card.addEventListener("pointermove", e => {
+    if (!on) return;
+    const mx = e.clientX - sx, my = e.clientY - sy;
+    if (horiz === null && (Math.abs(mx) > 8 || Math.abs(my) > 8)) { horiz = Math.abs(mx) > Math.abs(my); if (horiz) card.setPointerCapture(e.pointerId); }
+    if (!horiz) return;
+    dx = mx; card.style.transform = `translateX(${dx}px) rotate(${dx / 28}deg)`;
+    const k = Math.min(1, Math.abs(dx) / 110); (dx > 0 ? yes : no).style.opacity = k; (dx > 0 ? no : yes).style.opacity = 0;
+    if (k >= 1 && !buzzed) { buzzed = true; P.haptic("light"); } if (k < 1) buzzed = false;
+  });
+  const end = () => {
+    if (!on) return; on = false; if (!horiz) return;
+    if (Math.abs(dx) < 110) { reset(); return; }
+    const val = dx > 0 ? 2 : 3, e = (document.querySelector(".choices [data-pick]") || {}).dataset.e;
+    card.style.transition = "transform .18s ease-in, opacity .18s"; card.style.transform = `translateX(${dx > 0 ? 130 : -130}%) rotate(${dx > 0 ? 18 : -18}deg)`; card.style.opacity = 0;
+    P.haptic("medium"); X().swipes++;
+    setTimeout(() => A.pick(e, val), 170);
+  };
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", () => { on = false; reset(); });
 }
 
 /* ================= події ================= */
