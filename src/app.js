@@ -221,11 +221,11 @@ function sort(anim){
     <div class="sc-head">${sign(v,"",true)}<div><p class="cl-name">${esc(cName(v.c))}</p><h2>${esc(nm(v))}</h2><p class="sub">${esc(other(v))}</p></div></div>
     ${tl}<p>${esc(f(v,"m"))}</p>
     <div class="blk"><span class="lbl">${esc(t("life"))}</span><p>${esc(f(v,"l"))}</p></div>
-    ${H.shortCard?`<div class="blk q"><span class="lbl">${esc(t("ask"))}</span><p>${esc(f(v,"q"))}</p></div>`:`
+    <div class="blk q ${H.shortCard?"":"xshort"}"><span class="lbl">${esc(t("ask"))}</span><p>${esc(f(v,"q"))}</p></div>${H.shortCard?"":`<div class="xfull">
     ${f(v,"d")?`<div class="blk d"><span class="lbl">${esc(t("confuse"))}</span><p>${esc(f(v,"d"))}</p></div>`:""}
     ${f(v,"s")?`<div class="blk sh"><span class="lbl">${esc(t("shadow"))}</span><p>${esc(f(v,"s"))}</p></div>`:""}
     <div class="blk q"><span class="lbl">${esc(t("questions"))}</span><ol><li>${esc(f(v,"q"))}</li>${t("gq").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>
-    ${f(v,"k")?`<div class="blk st"><span class="lbl">${esc(t("step"))}</span><p>${esc(f(v,"k"))}</p></div>`:""}`}
+    ${f(v,"k")?`<div class="blk st"><span class="lbl">${esc(t("step"))}</span><p>${esc(f(v,"k"))}</p></div>`:""}</div>`}
     <button class="more" data-detail="${esc(v.e)}">${esc(t("more"))} →</button>
    </article>
    <div class="choices">
