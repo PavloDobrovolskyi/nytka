@@ -41,6 +41,8 @@ export function attach(api, hooks) {
   H.afterRender = afterRender;
   H.onPick = () => P.haptic("light");
   H.swipeNo = true;
+  H.swipeMine = true;
+  H.onBack = () => { if (!$("#doc").hidden) { closeDoc(); return true; } return false; };
   H.onSwipeReady = () => P.haptic("light");
   H.onSwipe = () => { P.haptic("medium"); X().swipes++; };
   H.onChange = onDataChange;

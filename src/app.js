@@ -161,8 +161,8 @@ function shell(){
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
 const navStack=[];let navReady=false;
-function goBack(){if(sess.openE){closeDetail();return true}const p=navStack.pop();if(p){go(p,false,true);return true}return false}
-function go(v,keepScroll,back){if(v==="home"&&H.home)v=H.home;if(navReady&&!back&&view!==v){navStack.push(view);if(navStack.length>30)navStack.shift()}navReady=true;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
+function goBack(){if(H.onBack&&H.onBack())return true;if(sess.openE){closeDetail();return true}const p=navStack.pop();if(p){go(p,false,true);return true}return false}
+function go(v,keepScroll,back){if(v==="home"&&H.home)v=H.home;if(navReady&&!back&&view!==v&&view!=="about"){navStack.push(view);if(navStack.length>30)navStack.shift()}navReady=true;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -237,8 +237,8 @@ function sort(anim){
   if(H.afterRender)H.afterRender("sort");
 }
 function pick(e,val){if(H.onPick)H.onPick(e,val);setS(e,{s:val});sess.hist.push(e);shell();sort(true)}
-const SITE_SWIPE=()=>!document.documentElement.classList.contains("is-app");
-/* сайт: свайп зліва направо будь-де на сторінці — назад (закрити картку або попередня сторінка) */
+const SITE_SWIPE=()=>true;
+/* свайп зліва направо будь-де на сторінці — назад (закрити картку або попередня сторінка) */
 (()=>{let sx=0,sy=0,st=0,on=false;
  document.addEventListener("touchstart",e=>{on=false;if(!SITE_SWIPE()||e.touches.length!==1)return;const el=e.target.closest?e.target:e.target.parentElement;
   if(el.closest(".scard,input,textarea,.chips,.gs,[data-noswipe]"))return;const t0=e.touches[0];sx=t0.clientX;sy=t0.clientY;st=Date.now();on=true},{passive:true});
@@ -249,10 +249,10 @@ function undo(){const e2=sess.hist.pop();if(e2){setS(e2,{s:0});shell();sort(true
 /* свайп по картці: вправо — повернутися до попередньої; вліво — «Ні», якщо дозволено (H.swipeNo) */
 function cardSwipe(e){
   const card=$(".scard");if(!card)return;
-  card.insertAdjacentHTML("beforeend",`<span class="stamp st-back">← ${esc(t("back"))}</span>`+(H.swipeNo?`<span class="stamp st-no">${esc(t("st")[3])}</span>`:""));
+  card.insertAdjacentHTML("beforeend",(H.swipeMine?`<span class="stamp st-back st-yes">${esc(t("st")[2])}</span>`:`<span class="stamp st-back">← ${esc(t("back"))}</span>`)+(H.swipeNo?`<span class="stamp st-no">${esc(t("st")[3])}</span>`:""));
   const sb=card.querySelector(".st-back"),sn=card.querySelector(".st-no"),LIM=100;
   let sx=0,sy=0,dx=0,on=false,horiz=null,buzz=false;
-  const ok=d=>d>0?(sess.hist.length>0||(SITE_SWIPE()&&navStack.length>0)):!!H.swipeNo;
+  const ok=d=>d>0?(H.swipeMine||sess.hist.length>0||navStack.length>0):!!H.swipeNo;
   const reset=()=>{card.style.transition="transform .2s ease";card.style.transform="";sb.style.opacity=0;if(sn)sn.style.opacity=0;setTimeout(()=>card.style.transition="",220)};
   card.addEventListener("pointerdown",ev=>{if(ev.pointerType==="mouse"||ev.target.closest("button,a"))return;on=true;horiz=null;buzz=false;sx=ev.clientX;sy=ev.clientY;dx=0});
   card.addEventListener("pointermove",ev=>{
@@ -267,8 +267,8 @@ function cardSwipe(e){
     if(!on)return;on=false;if(!horiz)return;
     if(Math.abs(dx)<LIM||!ok(dx)){reset();return}
     card.style.transition="transform .18s ease-in, opacity .18s";card.style.transform=`translateX(${dx>0?130:-130}%) rotate(${dx>0?18:-18}deg)`;card.style.opacity=0;
-    if(H.onSwipe)H.onSwipe(dx>0?"back":"no");
-    setTimeout(()=>dx>0?(sess.hist.length?undo():goBack()):pick(e,3),170);
+    if(H.onSwipe)H.onSwipe(dx>0?(H.swipeMine?"mine":"back"):"no");
+    setTimeout(()=>dx>0?(H.swipeMine?pick(e,2):sess.hist.length?undo():goBack()):pick(e,3),170);
   });
   card.addEventListener("pointercancel",()=>{on=false;reset()});
 }

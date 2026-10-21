@@ -48,7 +48,7 @@ uk: {
   lockT: "Введи PIN", lockOpen: "Відкрити", lockWrong: "Неправильний PIN", lockBioBtn: t => `Відкрити через ${t || "біометрію"}`, lockReason: "Відкрити «Нитку»",
   lockForgot: "Забув PIN", lockReset: "Стерти всі дані й скинути PIN", lockResetAsk: "Ще раз — стерти все без відновлення",
   // Свайпи
-  swipeHint: "Свайп вправо — назад, вліво — «Ні»",
+  swipeHint: "Свайп вправо — «Моє», вліво — «Ні»",
   // Нагадування
   nWeeklyT: "Нитка · крок тижня", nWeeklyB: (v, k) => v ? `${v}: ${k}` : "Обери цінність тижня і зроби маленький крок.",
   nMonthlyT: "Нитка · перевірка місяця", nMonthlyB: "Дві хвилини: як змінилося «важливо ↔ як я живу»?",
@@ -92,7 +92,7 @@ en: {
   setData: "Data", setAbout: "About", version: "Version", contact: "Support email",
   lockT: "Enter PIN", lockOpen: "Unlock", lockWrong: "Wrong PIN", lockBioBtn: t => `Unlock with ${t || "biometrics"}`, lockReason: "Unlock Nytka",
   lockForgot: "Forgot PIN", lockReset: "Erase all data and reset PIN", lockResetAsk: "Tap again to erase everything for good",
-  swipeHint: "Swipe right to go back, left for “No”",
+  swipeHint: "Swipe right for “Mine”, left for “No”",
   nWeeklyT: "Nytka · step of the week", nWeeklyB: (v, k) => v ? `${v}: ${k}` : "Pick a value for the week and take a small step.",
   nMonthlyT: "Nytka · monthly check", nMonthlyB: "Two minutes: how has “matters ↔ how I live” changed?",
   widgetLabel: "Focus of the week", widgetEmpty: "Open Nytka and pick a value for the week"
