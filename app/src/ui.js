@@ -451,7 +451,7 @@ function swipes() {
     if (horiz === null && (Math.abs(mx) > 8 || Math.abs(my) > 8)) { horiz = Math.abs(mx) > Math.abs(my); if (horiz) card.setPointerCapture(e.pointerId); }
     if (!horiz) return;
     dx = mx; card.style.transform = `translateX(${dx}px) rotate(${dx / 28}deg)`;
-    const k = Math.min(1, Math.abs(dx) / 110); (dx > 0 ? yes : no).style.opacity = k; (dx > 0 ? no : yes).style.opacity = 0;
+    const k = Math.min(1, Math.abs(dx) / 110); (dx > 0 ? yes : no).style.opacity = k * .55; (dx > 0 ? no : yes).style.opacity = 0;
     if (k >= 1 && !buzzed) { buzzed = true; P.haptic("light"); } if (k < 1) buzzed = false;
   });
   const end = () => {

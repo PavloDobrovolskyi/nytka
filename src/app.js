@@ -250,7 +250,7 @@ function cardSwipe(e){
     if(!on)return;const mx=ev.clientX-sx,my=ev.clientY-sy;
     if(horiz===null&&(Math.abs(mx)>8||Math.abs(my)>8)){horiz=Math.abs(mx)>Math.abs(my);if(horiz)card.setPointerCapture(ev.pointerId)}
     if(!horiz)return;dx=mx;card.style.transform=`translateX(${dx}px) rotate(${dx/30}deg)`;
-    const k=Math.min(1,Math.abs(dx)/LIM);(dx>0?yes:no).style.opacity=k;(dx>0?no:yes).style.opacity=0;
+    const k=Math.min(1,Math.abs(dx)/LIM);(dx>0?yes:no).style.opacity=k*.55;(dx>0?no:yes).style.opacity=0;
   });
   card.addEventListener("pointerup",()=>{
     if(!on)return;on=false;if(!horiz)return;if(Math.abs(dx)<LIM){reset();return}
