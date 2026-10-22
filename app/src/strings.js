@@ -35,8 +35,9 @@ uk: {
   // PDF і резервна копія
   pdfBtn: "PDF для терапевта", pdfMaking: "Готую PDF…", pdfTitle: "Мої цінності", pdfFor: "Підсумок для роботи з психотерапевтом", pdfPrep: "До наступної сесії", pdfJournal: "Щоденник за 2 тижні",
   pdfGap: "розрив", pdfMade: "Створено в застосунку «Нитка»",
-  backupT: "Резервна копія", backupHint: "Збережи файл у «Файли», на хмарний диск чи надішли собі. На новому телефоні відкрий його кнопкою «Відновити з файлу».",
-  backupSave: "Зберегти файл", backupLoad: "Відновити з файлу", backupBad: "Це не файл резервної копії «Нитки».",
+  backupT: "Резервна копія", backupHint: "Код переносить дані між телефонами і сайтом nytka.life. Згенеруй і скопіюй його тут, а на іншому пристрої встав у нижнє поле. З сайту сюди переносяться цінності, оцінки й нотатки; щоденник і перевірки — лише між застосунками.",
+  backupFileHint: "Великий щоденник або копія в «Файли» чи iCloud — зручніше файлом. Усередині той самий код.",
+  backupSave: "Зберегти як файл", backupLoad: "Відновити з файлу", backupBad: "Це не файл і не код резервної копії «Нитки».",
   backupAsk: n => `Замінити поточні дані даними з файлу (${n} ${plural(n, "цінність", "цінності", "цінностей")})?`, backupYes: "Так, замінити", backupDone: "Дані відновлено",
   // Налаштування
   setLang: "Мова", setRemind: "Нагадування", remWeekly: "Щотижня: маленький крок", remMonthly: "Раз на місяць: перевірка", remDay: "День", remTime: "Час",
@@ -82,8 +83,9 @@ en: {
   trendOne: "This is your first check. Lines will appear after the next one.", trendAvg: "average",
   pdfBtn: "PDF for therapist", pdfMaking: "Making the PDF…", pdfTitle: "My values", pdfFor: "Summary for work with a psychotherapist", pdfPrep: "Before the next session", pdfJournal: "Journal, last 2 weeks",
   pdfGap: "gap", pdfMade: "Created with the Nytka app",
-  backupT: "Backup", backupHint: "Save the file to Files or a cloud drive, or send it to yourself. On a new phone, open it with “Restore from file”.",
-  backupSave: "Save file", backupLoad: "Restore from file", backupBad: "This isn't a Nytka backup file.",
+  backupT: "Backup", backupHint: "The code moves your data between phones and the nytka.life site. Generate and copy it here, then paste it into the lower field on the other device. From the site you get values, ratings and notes; the journal and check-ins move only between apps.",
+  backupFileHint: "For a big journal or a copy in Files or iCloud, a file is easier. It holds the same code.",
+  backupSave: "Save as file", backupLoad: "Restore from file", backupBad: "This isn't a Nytka backup file or code.",
   backupAsk: n => `Replace current data with the file's data (${n} ${n === 1 ? "value" : "values"})?`, backupYes: "Yes, replace", backupDone: "Data restored",
   setLang: "Language", setRemind: "Reminders", remWeekly: "Weekly: a small step", remMonthly: "Monthly: the check", remDay: "Day", remTime: "Time",
   remDenied: "Notifications are off. Turn them on for Nytka in your phone's settings.", remWeb: "Reminders work in the phone app.",

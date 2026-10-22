@@ -26,7 +26,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gapT:"Важливо для мене ↔ як я живу зараз",gapHint:"Тут порівнюються дві оцінки з карток твоїх цінностей: наскільки цінність для тебе важлива і наскільки ти зараз за нею живеш. Угорі — найбільші розриви: там у житті бракує чогось важливого, і це добра тема для розмови з психотерапевтом. Мінус означає, що ти живеш за цінністю менше, ніж вона для тебе важить. Плюс — що віддаєш їй більше.",
  gapLeg:["наскільки важливо","наскільки живу за нею зараз"],gapEmpty:"Відкрий будь-яку цінність зі списку «Моє» і внизу картки посунь обидва повзунки: «Наскільки це важливо для мене» і «Наскільки я зараз за цим живу». Тут з'явиться порівняння.",
  sumT:"Підсумок",sumHint:"Текст, який можна скопіювати і показати терапевту чи зберегти в нотатках.",copy:"Скопіювати",copied:"Скопійовано",
- backupT:"Резервна копія",backupHint:"Дані живуть у цьому браузері. Щоб перенести їх на інший пристрій, згенеруй і скопіюй код, а там встав його в нижнє поле.",
+ backupT:"Резервна копія",backupHint:"Дані живуть у цьому браузері. Щоб перенести їх на інший пристрій або в застосунок «Нитка», згенеруй і скопіюй код, а там встав його в нижнє поле.",
  genB:"Згенерувати код",exportB:"Скопіювати код",importB:"Відновити з коду",importPh:"Встав сюди код з іншого пристрою…",outPh:"Натисни «Згенерувати код», і він з'явиться тут",copiedCode:"Код скопійовано. Збережи його в нотатках або надішли собі.",copyManual:"Цей браузер не дав скопіювати код. Відкрий сайт у Safari чи Chrome і спробуй ще раз.",codeOk:(m,r)=>`✓ Код розпізнано: ${m} у «Моє», ${r} оцінено. Поточні позначки буде замінено.`,imported:"Відновлено",badCode:"Код не розпізнано. Перевір, що скопійовано весь код, від NYTKA до останнього символу.",pasteFirst:"Спершу встав код у поле вище.",
  wipe:"Стерти все",wipeAsk:"Натисни ще раз, щоб стерти всі дані",
  sumHead:"МОЇ ЦІННОСТІ",sumTop:"Топ-5",sumRest:"Інші з 12",sumImp:"важливо",sumLiv:"живу зараз",sumNote:"Для мене",sumEx:"Приклад",sumStep:"Крок",
@@ -57,7 +57,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gapT:"What matters to me ↔ how I live now",gapHint:"This compares two ratings from your value cards: how important a value is to you and how much you live by it right now. The biggest gaps are at the top: something important is missing from your life there, and it's a good topic to bring to your psychotherapist. A minus means you live by the value less than it matters to you. A plus means you give it more.",
  gapLeg:["how important","how much I live by it now"],gapEmpty:"Open any value in your “Mine” list and move both sliders at the bottom of the card: “How important this is to me” and “How much I live by it now”. The comparison will appear here.",
  sumT:"Summary",sumHint:"Text you can copy and share with your therapist or keep in your notes.",copy:"Copy",copied:"Copied",
- backupT:"Backup",backupHint:"Your data lives in this browser. To move it to another device, generate and copy the code, then paste it into the lower field there.",
+ backupT:"Backup",backupHint:"Your data lives in this browser. To move it to another device or to the Nytka app, generate and copy the code, then paste it into the lower field there.",
  genB:"Generate code",exportB:"Copy code",importB:"Restore from code",importPh:"Paste the code from your other device here…",outPh:"Tap “Generate code” and it will appear here",copiedCode:"Code copied. Keep it in your notes or send it to yourself.",copyManual:"This browser didn't allow copying. Open the site in Safari or Chrome and try again.",codeOk:(m,r)=>`✓ Code recognised: ${m} in “Mine”, ${r} rated. Your current marks will be replaced.`,imported:"Restored",badCode:"Code not recognised. Make sure you copied the whole code, from NYTKA to the very last character.",pasteFirst:"Paste the code into the field above first.",
  wipe:"Erase everything",wipeAsk:"Tap again to erase all data",
  sumHead:"MY VALUES",sumTop:"Top 5",sumRest:"The rest of my 12",sumImp:"matters",sumLiv:"living it now",sumNote:"For me",sumEx:"Example",sumStep:"Step",
@@ -323,6 +323,13 @@ function renderSheet(){
   $("#sheet .sheet").scrollTop=0;
 }
 
+/* ---------- код резервної копії: той самий блок на сайті й у застосунку ---------- */
+function codePanel(){return `<div class="bk"><div class="io out" id="ioOut" role="status" data-ph="${esc(t("outPh"))}"></div>
+    <button class="btn small primary" id="exp">${esc(t("genB"))}</button>
+    <p class="note-ok" id="expMsg" role="status"></p></div>
+   <div class="bk"><textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    <button class="btn small" id="impCode">${esc(t("importB"))}</button>
+    <p class="note-ok" id="ioMsg" role="status"></p></div>`}
 /* ---------- mine ---------- */
 function mine(){
   const my=V.filter(v=>S(v.e).s===2),maybe=V.filter(v=>S(v.e).s===1);
@@ -350,12 +357,7 @@ function mine(){
    <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}<button class="btn small" data-share>${esc(t("shareB"))}</button></div>
   </section>
   ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
-   <div class="bk"><div class="io out" id="ioOut" role="status" data-ph="${esc(t("outPh"))}"></div>
-    <button class="btn small primary" id="exp">${esc(t("genB"))}</button>
-    <p class="note-ok" id="expMsg" role="status"></p></div>
-   <div class="bk"><textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
-    <button class="btn small" id="impCode">${esc(t("importB"))}</button>
-    <p class="note-ok" id="ioMsg" role="status"></p></div>
+   ${codePanel()}
    <div class="tools wipe-row"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div>
   </section>`}${foot()}`;
 }
@@ -364,7 +366,7 @@ function mine(){
    NYTKA1: старий формат без стиснення — далі приймається при відновленні. */
 const toB64=u=>{let s="";for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
 const streamTo=(data,tr)=>new Response(new Blob([data]).stream().pipeThrough(tr));
-async function makeCode(){const json=JSON.stringify(D.st);
+async function makeCode(){const json=JSON.stringify(D.x&&typeof D.x==="object"?{...D.st,_x:D.x}:D.st); // _x — дані застосунку (щоденник, перевірки); сайт їх пропускає
   try{if(window.CompressionStream)return "NYTKA2:"+toB64(new Uint8Array(await streamTo(json,new CompressionStream("deflate")).arrayBuffer()))}catch(e){}
   return "NYTKA1:"+toB64(new TextEncoder().encode(json))}
 async function readCode(raw){
@@ -376,20 +378,20 @@ async function readCode(raw){
   const txt=m[1]==="2"?await streamTo(u,new DecompressionStream("deflate")).text():new TextDecoder().decode(u);
   const st=JSON.parse(txt);if(!st||typeof st!=="object"||Array.isArray(st))throw 0;
   const out={};Object.keys(st).forEach(k=>{if(BY[k]&&st[k]&&typeof st[k]==="object")out[k]=st[k]});
-  return out;
+  return {st:out,x:st._x&&typeof st._x==="object"&&!Array.isArray(st._x)?st._x:null};
 }
 async function checkCode(){
   const io=$("#io"),m=$("#ioMsg");if(!io||!m)return;const raw=io.value.trim();
   if(!raw){m.textContent="";m.className="note-ok";return}
-  try{const st=await readCode(raw);if(io.value.trim()!==raw)return;const v=Object.values(st);
+  try{const {st}=await readCode(raw);if(io.value.trim()!==raw)return;const v=Object.values(st);
     m.textContent=t("codeOk")(v.filter(x=>x.s===2).length,v.filter(x=>x.s>0).length);m.className="note-ok good"}
   catch(x){if(io.value.trim()===raw){m.textContent=t("badCode");m.className="note-ok bad"}}
 }
 async function restoreCode(){
   const io=$("#io"),raw=((io&&io.value)||"").trim(),say=(k,c)=>{const m=$("#ioMsg");if(m){m.textContent=t(k);m.className="note-ok "+(c||"")}};
   if(!raw){say("pasteFirst");if(io)io.focus();return}
-  let st;try{st=await readCode(raw)}catch(x){say("badCode","bad");return}
-  D.st=st;save();shell();mine();say("imported","good");
+  let r;try{r=await readCode(raw)}catch(x){say("badCode","bad");return}
+  D.st=r.st;if(r.x&&H.acceptsX)D.x=r.x;save();shell();rerender();say("imported","good");
 }
 function summary(){
   const my=V.filter(v=>S(v.e).s===2);if(!my.length)return t("emptyMine");
@@ -472,7 +474,7 @@ document.addEventListener("keydown",e=>{
   if(map[e.key]&&v){e.preventDefault();pick(v.e,map[e.key])}
 });
 H.views={};
-const API={T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
+const API={codePanel,readCode,makeCode,T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
   go,rerender,shell,sess,$,openDetail,closeDetail,renderSheet,summary,work,workN,track,STITCH,pick,nextTodo,foot,copyText,get view(){return view}};
 function boot(){loadData();go(D.about?"home":"about")}
 if(NX){NX.attach(API,H);Promise.resolve(NX.ready).then(boot)}else boot();

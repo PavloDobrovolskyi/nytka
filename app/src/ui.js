@@ -40,6 +40,7 @@ export function attach(api, hooks) {
   Object.assign(H.views, { today, journal, prep, check, settings });
   H.afterRender = afterRender;
   H.onPick = () => P.haptic("light");
+  H.acceptsX = true;   // код резервної копії переносить і щоденник, перевірки, підготовку
   H.ownSwipe = true;   // свайпи на картці — свої (з вібрацією і підказкою)
   H.shortCard = true;  // у застосунку картка сортування коротка, повний опис — у «Детальніше»
   H.onChange = onDataChange;
@@ -315,25 +316,34 @@ async function makePdf() {
 
 /* ================= резервна копія ================= */
 function backupPanel() {
+  // Головне — код (той самий формат, що на сайті); файл — запасний спосіб для великого щоденника чи копії в iCloud.
   return `<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
-    <div class="tools"><button class="btn small" data-x="bsave">${esc(t("backupSave"))}</button><label class="btn small" for="bfile">${esc(t("backupLoad"))}</label><input type="file" id="bfile" class="vh" accept="application/json,.json"><span class="note-ok" id="bmsg"></span></div>
+    ${A.codePanel()}
+    <p class="hint" style="margin-top:14px">${esc(t("backupFileHint"))}</p>
+    <div class="tools"><button class="btn small ghost" data-x="bsave">${esc(t("backupSave"))}</button><label class="btn small ghost" for="bfile">${esc(t("backupLoad"))}</label><input type="file" id="bfile" class="vh" accept="application/json,.json,text/plain,.txt"><span class="note-ok" id="bmsg"></span></div>
     <div id="bconfirm"></div>
     <div class="tools"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div></section>`;
 }
 async function backupSave() {
-  const payload = { app: "nytka", v: 1, exported: new Date().toISOString(), data: { lang: A.D.lang, st: A.D.st, x: X() } };
+  // усередині файлу — той самий код, що й у полі «Код»
+  const payload = { app: "nytka", v: 2, exported: new Date().toISOString(), code: await A.makeCode() };
   const r = await P.shareFile(`nytka-backup-${dayKey(new Date())}.json`, JSON.stringify(payload, null, 1), "application/json", false, t("backupT"));
   if (r === "downloaded") toast(t("saved"));
 }
 function backupRead(file) {
   const fr = new FileReader();
-  fr.onload = () => {
+  fr.onload = async () => {
     try {
-      const j = JSON.parse(fr.result);
-      if (!j || j.app !== "nytka" || !j.data || typeof j.data.st !== "object") throw 0;
-      const st = {}; for (const k in j.data.st) if (A.BY[k]) st[k] = j.data.st[k];
-      ui.backup = { lang: j.data.lang === "en" ? "en" : "uk", st, x: j.data.x && typeof j.data.x === "object" ? j.data.x : blankX() };
-      const n = Object.keys(st).length;
+      const raw = String(fr.result || "");
+      let j = null; try { j = JSON.parse(raw); } catch (e) { }
+      if (j && j.app === "nytka" && j.data && typeof j.data.st === "object") {   // старий формат файлу (до 1.2)
+        const st = {}; for (const k in j.data.st) if (A.BY[k]) st[k] = j.data.st[k];
+        ui.backup = { lang: j.data.lang === "en" ? "en" : "uk", st, x: j.data.x && typeof j.data.x === "object" ? j.data.x : blankX() };
+      } else {                                                                 // новий файл з кодом або просто текст із кодом
+        const r = await A.readCode(j && j.code ? j.code : raw);
+        ui.backup = { lang: A.D.lang, st: r.st, x: r.x || X() };
+      }
+      const n = Object.keys(ui.backup.st).length;
       $("#bconfirm").innerHTML = `<div class="warnbox">${esc(t("backupAsk")(n))}<div class="tools"><button class="btn small red" data-x="bapply">${esc(t("backupYes"))}</button><button class="btn small ghost" data-x="bcancel">${esc(t("cancel"))}</button></div></div>`;
     } catch (e) { $("#bmsg").textContent = t("backupBad"); }
   };
@@ -496,7 +506,7 @@ function onClick(ev) {
     case "cksave": saveCheck(); break;
     case "pdf": makePdf(); break;
     case "bsave": backupSave(); break;
-    case "bapply": { const b = ui.backup; if (!b) break; A.D = b; X(); A.save(); ui.backup = null; A.shell(); A.rerender(); toast(t("backupDone")); break; }
+    case "bapply": { const b = ui.backup; if (!b) break; A.D = { ...A.D, ...b }; X(); A.save(); ui.backup = null; A.shell(); A.rerender(); toast(t("backupDone")); break; }
     case "bcancel": ui.backup = null; $("#bconfirm").innerHTML = ""; break;
     case "pinsave": savePin(); break;
     case "pincancel": ui.pinForm = false; A.rerender(); break;
