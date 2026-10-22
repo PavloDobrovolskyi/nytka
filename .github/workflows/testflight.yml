@@ -65,6 +65,12 @@ jobs:
         run: |
           gem list -i xcodeproj >/dev/null || sudo gem install xcodeproj --no-document
           ruby scripts/add_widget.rb
+      - name: Revoke old CI development certificates
+        if: steps.chk.outputs.ok == 'yes'
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "$KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8"
+          KEY_PATH="$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8" ruby .github/scripts/asc_revoke_ci_certs.rb | tee "$RUNNER_TEMP/certs.log"
       - name: Archive (signed)
         if: steps.chk.outputs.ok == 'yes'
         working-directory: app/ios/App
@@ -117,6 +123,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/ci" && cd "$RUNNER_TEMP/ci"
           git init -q -b ci-testflight
           echo "$STATUS $GITHUB_SHA build $((100 + GITHUB_RUN_NUMBER)) $(date -u +%FT%TZ)" > status.txt
+          cp "$RUNNER_TEMP/certs.log" . 2>/dev/null || true
           tail -n 300 "$RUNNER_TEMP/build.log" > build-tail.log 2>/dev/null || echo "no log" > build-tail.log
           grep -nE "error:|error |FAILED|No profiles|requires a provisioning" -B 2 -A 4 "$RUNNER_TEMP/build.log" > errors.log 2>/dev/null || true
           git add -A && git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "testflight $STATUS ${GITHUB_SHA::7}"

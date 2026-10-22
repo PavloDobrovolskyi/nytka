@@ -7,8 +7,9 @@ android {
         applicationId "ua.nytka.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        // На CI номер збірки — хвилини з 1970 року: завжди росте, тож новий APK ставиться поверх старого
+        versionCode System.getenv("CI") ? (int) (System.currentTimeMillis() / 60000L) : 1
+        versionName rootProject.file("../../release/VERSION").exists() ? rootProject.file("../../release/VERSION").text.trim() : "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,7 +17,20 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Постійний тестовий ключ: усі тестові APK підписані однаково, тому оновлення ставиться поверх попередньої версії.
+    // Для Google Play буде окремий ключ.
+    signingConfigs {
+        test {
+            storeFile file("nytka-test.keystore")
+            storePassword "nytkatest"
+            keyAlias "nytka"
+            keyPassword "nytkatest"
+        }
+    }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.test
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
