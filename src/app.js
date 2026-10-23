@@ -337,9 +337,8 @@ function codePanel(){return `<div class="bk"><div class="io out" id="ioOut" role
 /* ---------- налаштування сайту (шестерня): резервна копія, розповісти, посилання, «Стерти все» внизу ---------- */
 function siteSettings(){
   $("#view").innerHTML=`<div class="mine-head"><h1>${esc(t("settings"))}</h1></div>
-  <section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>${codePanel()}</section>
   <section class="panel"><h2>${esc(t("tellB"))}</h2><p class="hint">${esc(t("tellHint"))}</p><div class="tools"><button class="btn small" data-share>${esc(t("tellB"))}</button></div></section>
-  <section class="panel"><h2>${esc(t("aboutSec"))}</h2><div class="tools"><button class="btn small" data-go="about">${esc(t("aboutL"))}</button><a class="btn small" href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a class="btn small" href="support.html#${D.lang}">${esc(t("supportL"))}</a><a class="btn small" href="help.html#${D.lang}">${esc(t("helpL"))}</a></div></section>
+  <section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>${codePanel()}</section>
   <section class="panel danger"><h2>${esc(t("dangerT"))}</h2><p class="hint">${esc(t("dangerHint"))}</p>
    <div class="tools"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div></section>${foot()}`;
 }

@@ -419,6 +419,7 @@ function settings() {
      <label class="fl" for="pin2">${esc(t("pinRepeat"))}</label><input id="pin2" class="inp" type="password" inputmode="numeric" autocomplete="off" maxlength="6">
      <div class="tools"><button class="btn small primary" data-x="pinsave">${esc(t("pinSave"))}</button><button class="btn small ghost" data-x="pincancel">${esc(t("cancel"))}</button><span class="note-ok" id="pinmsg"></span></div></div>`;
   $("#view").innerHTML = `<div class="xhead"><h1>${esc(t("settings"))}</h1></div>
+   <section class="panel set"><h2>${esc(t("tellB"))}</h2><p class="hint">${esc(t("tellHint"))}</p><div class="tools"><button class="btn small" data-share>${esc(t("tellB"))}</button></div></section>
    <section class="panel set"><h2>${esc(t("setLang"))}</h2><div class="seg"><button data-lang="uk" aria-pressed="${A.D.lang === "uk"}">Українська</button><button data-lang="en" aria-pressed="${A.D.lang === "en"}">English</button></div></section>
    <section class="panel set"><h2>${esc(t("setRemind"))}</h2>
      ${sw("remW", s.weekly.on, t("remWeekly"))}
@@ -431,7 +432,6 @@ function settings() {
      ${ui.pinForm ? pinForm : ""}
      ${lk.on && !ui.pinForm ? `${ui.bio.available ? sw("lockBio", lk.bio, t("lockBio")(ui.bio.type)) : ""}<div class="tools"><button class="btn small" data-x="pinchange">${esc(t("lockChange"))}</button></div>` : ""}</section>
    ${backupPanel().replace('<section class="panel">', '<section class="panel set">')}
-   <section class="panel set"><h2>${esc(t("tellB"))}</h2><p class="hint">${esc(t("tellHint"))}</p><div class="tools"><button class="btn small" data-share>${esc(t("tellB"))}</button></div></section>
    <section class="panel set"><h2>${esc(t("setAbout"))}</h2>
      <p class="kv"><span>${esc(t("version"))}</span><b>${esc(ui.ver || "1.0")}</b></p>
      <p class="kv"><span>${esc(t("contact"))}</span><b>nytka.ua@gmail.com</b></p>
