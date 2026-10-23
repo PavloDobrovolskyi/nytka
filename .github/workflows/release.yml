@@ -67,6 +67,6 @@ jobs:
           { cat release/notes.md; echo; echo "---"; echo "Коміт: \`${GITHUB_SHA::7}\` · зібрано $(date -u +%F)"; } > "$RUNNER_TEMP/notes.md"
           gh release create "v$V" "$APK" \
             --target "$GITHUB_SHA" \
-            --title "Нитка $V — стабільна версія" \
+            --title "Нитка $V — стабільна версія від $(TZ=Europe/Kyiv date +%d.%m.%Y)" \
             --notes-file "$RUNNER_TEMP/notes.md" \
             --latest
