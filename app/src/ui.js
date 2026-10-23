@@ -61,7 +61,7 @@ export function attach(api, hooks) {
   document.addEventListener("input", onInput);
   document.addEventListener("change", onChangeEv);
   const lang = document.querySelector(".top .lang");
-  if (lang) lang.insertAdjacentHTML("beforebegin", `<button class="ib gear" data-go="settings" id="gear">${ICONS.gear}</button>`);
+  if (lang && !$("#gear")) lang.insertAdjacentHTML("beforebegin", `<button class="ib gear" data-go="settings" id="gear">${ICONS.gear}</button>`);
   document.body.insertAdjacentHTML("beforeend", `<div class="toast" id="toast" role="status" aria-live="polite"></div><div class="doc-wrap" id="doc" hidden></div>`);
   P.onBack(onBack);
   P.onNotificationTap(ex => { if (!ex.view) return; booted ? A.go(ex.view) : (pendingView = ex.view); });

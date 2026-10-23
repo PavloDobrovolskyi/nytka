@@ -18,7 +18,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gq:["Коли я востаннє жив за цією цінністю?","Що мені заважає жити за нею більше?"],
  forMe:"Для мене",imp:"Наскільки це важливо для мене",liv:"Наскільки я зараз за цим живу",low:"зовсім ні",high:"дуже",
  noteL:"Що це значить для мене",exL:"Приклад з мого життя",notePh:"Своїми словами…",exPh:"Ситуація, де ця цінність проявилась або була порушена…",autosave:"Зберігається автоматично",trk:"Опрацьовано",trkN:{sc:"дві шкали",note:"що це значить для мене",ex:"приклад з життя"},worked:"опрацьовано",
- doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",shareB:"Поділитися «Ниткою»",tellB:"Розповісти про «Нитку»",shareMsg:"«Нитка» — простір для пошуку власних цінностей: 192 цінності з поясненнями. Безкоштовно і без реєстрації.",linkCopied:"Посилання скопійовано",shareHint:"Знаєш когось, кому це теж знадобиться?",
+ doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",shareB:"Поділитися «Ниткою»",tellB:"Розповісти про «Нитку»",settings:"Налаштування",aboutSec:"Про «Нитку»",tellHint:"Якщо «Нитка» тобі допомагає, надішли її тому, кому вона теж може знадобитися.",dangerT:"Небезпечна зона",dangerHint:"Стирає всі позначки, оцінки й нотатки в цьому браузері. Скасувати не можна, тож спершу збережи код резервної копії.",shareMsg:"«Нитка» — простір для пошуку власних цінностей: 192 цінності з поясненнями. Безкоштовно і без реєстрації.",linkCopied:"Посилання скопійовано",shareHint:"Знаєш когось, кому це теж знадобиться?",
  allT:"Усі цінності",search:"Пошук: свобода, freedom…",all:"Усі",nothing:"Нічого не знайдено.",
  mineT:"Мої цінності",mineP:"Тут збирається все, що ти позначив. Ціль — 12 цінностей у «Моє», з них 5 найголовніших.",
  mineList:"Моє",maybeList:"Можливо",over:"Більше 12. Порівняй схожі і переведи частину в «Можливо».",
@@ -49,7 +49,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gq:["When did I last live by this value?","What stops me living by it more?"],
  forMe:"For me",imp:"How important this is to me",liv:"How much I live by it now",low:"not at all",high:"a lot",
  noteL:"What it means to me",exL:"An example from my life",notePh:"In your own words…",exPh:"A situation where this value showed up or was violated…",autosave:"Saved automatically",trk:"Worked through",trkN:{sc:"both scales",note:"what it means to me",ex:"example from life"},worked:"worked through",
- doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",shareB:"Share Nytka",tellB:"Tell someone about Nytka",shareMsg:"Nytka — a space to find your own values: 192 values with explanations. Free, no sign-up.",linkCopied:"Link copied",shareHint:"Know someone who might need this too?",
+ doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",shareB:"Share Nytka",tellB:"Tell someone about Nytka",settings:"Settings",aboutSec:"About Nytka",tellHint:"If Nytka helps you, send it to someone who might need it too.",dangerT:"Danger zone",dangerHint:"Erases all marks, ratings and notes in this browser. This can't be undone, so save a backup code first.",shareMsg:"Nytka — a space to find your own values: 192 values with explanations. Free, no sign-up.",linkCopied:"Link copied",shareHint:"Know someone who might need this too?",
  allT:"All values",search:"Search: freedom, свобода…",all:"All",nothing:"Nothing found.",
  mineT:"My values",mineP:"Everything you've marked gathers here. The goal is 12 values in “Mine”, 5 of them the most important.",
  mineList:"Mine",maybeList:"Maybe",over:"More than 12. Compare similar ones and move some to “Maybe”.",
@@ -132,6 +132,7 @@ function sign(v,cls,stitch){
 
 /* ---------- icons ---------- */
 const IC={
+ gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>',
  sort:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M7 4h10"/></svg>',
  lib:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
  mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.5"/></svg>',
@@ -159,9 +160,10 @@ function shell(){
   $("#tabs").innerHTML=tabs.map(([k,l])=>`<button data-go="${k}" ${cur===k?'aria-current="page"':""}>${esc(l)}</button>`).join("");
   const c=counts();
   $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${cur===k?'aria-current="page"':""}${k==="mine"&&c[2]?` aria-label="${esc(l)}: ${c[2]}"`:""}>${k==="mine"?mineIcon(c[2]):IC[k]}<span>${esc(l)}</span></button>`).join("");
+  const g=$("#gear");if(g){if(!g.innerHTML)g.innerHTML=IC.gear;g.setAttribute("aria-label",t("settings"));g.toggleAttribute("aria-current",view==="settings")}
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
-function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;if(H.route)v=H.route(v)||v;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
+function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;if(H.route)v=H.route(v)||v;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v]||(v==="settings"?siteSettings:home))();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -332,6 +334,15 @@ function codePanel(){return `<div class="bk"><div class="io out" id="ioOut" role
    <div class="bk"><textarea class="io" id="io" placeholder="${esc(t("importPh"))}" aria-label="${esc(t("importPh"))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
     <button class="btn small" id="impCode">${esc(t("importB"))}</button>
     <p class="note-ok" id="ioMsg" role="status"></p></div>`}
+/* ---------- налаштування сайту (шестерня): резервна копія, розповісти, посилання, «Стерти все» внизу ---------- */
+function siteSettings(){
+  $("#view").innerHTML=`<div class="mine-head"><h1>${esc(t("settings"))}</h1></div>
+  <section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>${codePanel()}</section>
+  <section class="panel"><h2>${esc(t("tellB"))}</h2><p class="hint">${esc(t("tellHint"))}</p><div class="tools"><button class="btn small" data-share>${esc(t("tellB"))}</button></div></section>
+  <section class="panel"><h2>${esc(t("aboutSec"))}</h2><div class="tools"><button class="btn small" data-go="about">${esc(t("aboutL"))}</button><a class="btn small" href="privacy.html#${D.lang}">${esc(t("privacyL"))}</a><a class="btn small" href="support.html#${D.lang}">${esc(t("supportL"))}</a><a class="btn small" href="help.html#${D.lang}">${esc(t("helpL"))}</a></div></section>
+  <section class="panel danger"><h2>${esc(t("dangerT"))}</h2><p class="hint">${esc(t("dangerHint"))}</p>
+   <div class="tools"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div></section>${foot()}`;
+}
 /* ---------- mine ---------- */
 function mine(){
   const my=V.filter(v=>S(v.e).s===2),maybe=V.filter(v=>S(v.e).s===1);
@@ -358,10 +369,7 @@ function mine(){
    <pre class="summary" id="sum">${esc(summary())}</pre>
    <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
   </section>`}
-  ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
-   ${codePanel()}
-   <div class="tools wipe-row"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div>
-  </section>`}${foot()}`;
+  ${foot()}`;
 }
 /* ---------- код резервної копії ----------
    NYTKA2: стиснутий (deflate) — у 10–20 разів коротший, тож не ріжеться месенджерами на кілька повідомлень.
