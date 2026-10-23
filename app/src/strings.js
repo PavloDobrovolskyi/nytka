@@ -2,6 +2,13 @@
 export const S = {
 uk: {
   today: "Сьогодні", journal: "Щоденник", settings: "Налаштування", libShort: "Цінності",
+  sessionT: "Сесія", allSeg: "Усі цінності", jWrite: "Записати думку", jAll: "Усі записи", jEmptyToday: "Тут з'являтимуться твої думки й зроблені кроки.",
+  tellHint: "Якщо «Нитка» тобі допомагає, надішли її тому, кому вона теж може знадобитися.",
+  dangerT: "Небезпечна зона", dangerHint: "Стирає всі позначки, оцінки, нотатки й щоденник на цьому телефоні. Скасувати не можна, тож спершу збережи резервну копію.",
+  resortT: "Пересортування", resortDue: "Минуло пів року відтоді, як ти відсортував цінності. Пересортуй їх і подивись, що змінилося.",
+  resortNext: d => `Наступне пересортування — ${d}.`, resortGo: "Пересортувати", resortNow: "Пересортувати зараз",
+  resortAsk: "Натисни ще раз: поточний вибір збережеться для порівняння", resortStarted: "Почали заново. Оцінки й нотатки збережено",
+  cmpT: d => `Тоді (${d}) і зараз`, cmpCame: "Прийшли", cmpLeft: "Пішли", cmpStay: "Лишилися", cmpWait: "Порівняння «тоді / зараз» з'явиться, коли закінчиш сортування.",
   weekdays: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"],
   // Сьогодні
   focusT: "Фокус тижня", focusPick: "Обери цінність, на якій зосередишся цього тижня.",
@@ -57,6 +64,13 @@ uk: {
 },
 en: {
   today: "Today", journal: "Journal", settings: "Settings", libShort: "Values",
+  sessionT: "Session", allSeg: "All values", jWrite: "Write a thought", jAll: "All entries", jEmptyToday: "Your thoughts and completed steps will appear here.",
+  tellHint: "If Nytka helps you, send it to someone who might need it too.",
+  dangerT: "Danger zone", dangerHint: "Erases all marks, ratings, notes and the journal on this phone. This can't be undone, so save a backup first.",
+  resortT: "Re-sort", resortDue: "It's been half a year since you sorted your values. Sort them again and see what has changed.",
+  resortNext: d => `Next re-sort: ${d}.`, resortGo: "Re-sort", resortNow: "Re-sort now",
+  resortAsk: "Tap again: your current choice will be saved for comparison", resortStarted: "Started over. Ratings and notes are kept",
+  cmpT: d => `Then (${d}) and now`, cmpCame: "New", cmpLeft: "Gone", cmpStay: "Stayed", cmpWait: "The then / now comparison will appear when you finish sorting.",
   weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
   focusT: "Focus of the week", focusPick: "Pick the value you'll focus on this week.",
   focusNone: "First mark at least one value as “Mine”.", focusChange: "Change", focusSet: "Make it this week's focus", focusIs: "Focus of the week",

@@ -14,11 +14,11 @@ const ui = { composer: null, del: null, prepArm: false, pickFocus: false, ck: {}
 const t = k => A.t(k);
 const esc = s => A.esc(s);
 const $ = s => document.querySelector(s);
-const blankX = () => ({ focus: null, journal: [], checks: [], prep: { items: [], text: "", date: "" }, set: { weekly: { on: false, wd: 1, h: 19, m: 0 }, monthly: { on: false } }, swipes: 0 });
+const blankX = () => ({ focus: null, journal: [], checks: [], prep: { items: [], text: "", date: "" }, set: { weekly: { on: false, wd: 1, h: 19, m: 0 }, monthly: { on: false } }, swipes: 0, sortDone: null, history: [] });
 function X() { const D = A.D; if (!D.x) D.x = blankX(); const b = blankX(); for (const k in b) if (D.x[k] == null) D.x[k] = b[k]; return D.x; }
 const mineVals = () => A.V.filter(v => A.S(v.e).s === 2);
 const focusVal = () => { const f = X().focus; return f && A.S(f).s === 2 ? A.BY[f] : null; };
-const dayKey = d => d.toISOString().slice(0, 10);
+const dayKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const daysBetween = (a, b) => Math.floor((b - a) / 864e5);
 const loc = () => (A.D.lang === "en" ? "en-GB" : "uk-UA");
 const fmtDate = (d, o) => new Intl.DateTimeFormat(loc(), o).format(d);
@@ -27,6 +27,7 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const ICONS = {
   today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>',
   journal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h11a2 2 0 012 2v16H8a2 2 0 01-2-2z"/><path d="M6 19a2 2 0 012-2h11M10 7h6M10 11h6"/></svg>',
+  session: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 5h11a2 2 0 012 2v6a2 2 0 01-2 2H9l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"/><path d="M17 9h3a2 2 0 012 2v5a2 2 0 01-2 2h-1v3l-4-3h-3"/></svg>',
   gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>'
 };
 
@@ -35,9 +36,14 @@ export function attach(api, hooks) {
   A = api; H = hooks;
   Object.assign(A.T.uk, STR.uk); Object.assign(A.T.en, STR.en); Object.assign(A.IC, ICONS);
   H.home = "today";
-  H.tabs = () => [["today", t("today")], ["sort", t("sort")], ["lib", t("libShort")], ["mine", t("mine")], ["journal", t("journal")]];
+  // Вкладки: Сьогодні (зі щоденником) · Цінності (сортування + усі) · Мої · Сесія; налаштування — шестерня
+  H.tabs = () => [["today", t("today")], ["values", t("libShort")], ["mine", t("mine")], ["session", t("sessionT")]];
   H.bottom = H.tabs;
-  Object.assign(H.views, { today, journal, prep, check, settings });
+  H.route = v => { if (v === "sort" || v === "lib") { ui.valMode = v; return "values"; } if (v === "prep") return "session"; return v; };
+  H.tabOf = v => ({ journal: "today", check: "mine" })[v] || v;
+  Object.assign(H.views, { today, journal, values, session, check, settings });
+  A.IC.values = A.IC.lib;
+  H.noSummary = true;  // «Підсумок» живе у вкладці «Сесія»
   H.afterRender = afterRender;
   H.onPick = () => P.haptic("light");
   H.acceptsX = true;   // код резервної копії переносить і щоденник, перевірки, підготовку
@@ -49,7 +55,7 @@ export function attach(api, hooks) {
   H.mineExtra = mineExtra;
   H.sumTools = () => `<button class="btn small" data-x="pdf">${esc(t("pdfBtn"))}</button>`;
   H.share = (text, url) => P.shareText(text + " " + url, "Нитка").then(r => r === "copied" && toast(A.t("linkCopied")));
-  H.backupPanel = backupPanel;
+  H.backupPanel = () => "";  // резервна копія — лише в налаштуваннях
   document.documentElement.classList.add("is-app", "is-" + P.platform);
   document.addEventListener("click", onClick, true);
   document.addEventListener("input", onInput);
@@ -69,7 +75,7 @@ export function attach(api, hooks) {
 function afterRender(v) {
   const g = $("#gear"); if (g) { g.setAttribute("aria-label", t("settings")); g.toggleAttribute("aria-current", v === "settings"); }
   if (!booted) { booted = true; onDataChange(); if (pendingView) { const pv = pendingView; pendingView = null; setTimeout(() => A.go(pv), 0); } }
-  if (v === "sort") swipes();
+  if (v === "sort" || v === "values") { valSeg(); if (ui.valMode === "sort") swipes(); }
 }
 
 function onBack() {
@@ -92,6 +98,7 @@ function onDataChange() {
   clearTimeout(chgT);
   chgT = setTimeout(() => {
     if (!A.D) return;
+    { const x = X(), full = !A.counts()[0]; if (full && !x.sortDone) { x.sortDone = new Date().toISOString(); A.save(); } }
     const fv = focusVal(), tops = mineVals().filter(v => A.S(v.e).top);
     const pick = fv || tops[0] || mineVals()[0] || null;
     P.widgetUpdate(JSON.stringify({
@@ -109,6 +116,46 @@ async function reschedule(ask) {
   if (s.monthly.on) list.push({ id: 1002, title: t("nMonthlyT"), body: t("nMonthlyB"), schedule: { on: { day: 1, hour: s.weekly.h, minute: s.weekly.m } }, smallIcon: "ic_stat_nytka", extra: { view: "check" } });
   if (list.length) { ui.notif = await P.notifyPermission(ask); if (ui.notif !== "granted") return; }
   await P.scheduleAll(list);
+}
+
+/* ================= «Цінності»: сортування + усі цінності ================= */
+function values() {
+  if (!ui.valMode) ui.valMode = A.counts()[0] ? "sort" : "lib";
+  ui.valMode === "sort" ? A.sortView() : A.libView();
+}
+function valSeg() {
+  if ($("#vseg")) return;
+  $("#view").insertAdjacentHTML("afterbegin", `<div class="seg vseg" id="vseg"><button data-x="vmode" data-m="sort" aria-pressed="${ui.valMode === "sort"}">${esc(t("sort"))}</button><button data-x="vmode" data-m="lib" aria-pressed="${ui.valMode === "lib"}">${esc(t("allSeg"))}</button></div>`);
+}
+
+/* ================= пересортування раз на пів року ================= */
+const RESORT_DAYS = 182;
+function resortState() {
+  const x = X(); if (!x.sortDone) return { due: false, next: null };
+  const left = RESORT_DAYS - daysBetween(Date.parse(x.sortDone), Date.now());
+  return { due: left <= 0, next: new Date(Date.parse(x.sortDone) + RESORT_DAYS * 864e5) };
+}
+function startResort() {
+  const x = X(), my = mineVals();
+  x.history.push({ d: dayKey(new Date()), mine: my.map(v => v.e), top: my.filter(v => A.S(v.e).top).map(v => v.e) });
+  for (const e in A.D.st) { const s = A.D.st[e]; s.s = 0; s.top = false; }   // оцінки й нотатки лишаються
+  x.sortDone = null; A.sess.hist = []; ui.valMode = "sort"; A.save(); A.shell(); A.go("sort");
+}
+function resortPanel() {
+  const x = X(), last = x.history[x.history.length - 1], st = resortState(), done = !A.counts()[0];
+  let cmp = "";
+  if (last) {
+    if (!done) cmp = `<p class="muted">${esc(t("cmpWait"))}</p>`;
+    else {
+      const now = mineVals().map(v => v.e), was = new Set(last.mine);
+      const came = now.filter(e => !was.has(e)), left = last.mine.filter(e => !now.includes(e)), stay = now.filter(e => was.has(e));
+      const chips = list => list.length ? `<div class="pickchips">${list.map(e => A.BY[e]).filter(Boolean).map(v => `<button class="pchip" data-detail="${esc(v.e)}">${A.sign(v, "csign")}${esc(A.nm(v))}</button>`).join("")}</div>` : `<p class="muted small">—</p>`;
+      cmp = `<p class="lbl">${esc(t("cmpCame"))}</p>${chips(came)}<p class="lbl" style="margin-top:12px">${esc(t("cmpLeft"))}</p>${chips(left)}<p class="lbl" style="margin-top:12px">${esc(t("cmpStay"))}</p>${chips(stay)}`;
+    }
+  }
+  return `<section class="panel"><h2>${esc(last ? t("cmpT")(fmtDate(new Date(last.d + "T12:00"), { day: "numeric", month: "long", year: "numeric" })) : t("resortT"))}</h2>
+    ${cmp}${st.next ? `<p class="hint" style="margin-top:12px">${esc(st.due ? t("resortDue") : t("resortNext")(fmtDate(st.next, { day: "numeric", month: "long", year: "numeric" })))}</p>` : ""}
+    ${done ? `<div class="tools"><button class="btn small ${st.due ? "red" : ""}" data-x="resort">${esc(ui.resortArm ? t("resortAsk") : st.due ? t("resortGo") : t("resortNow"))}</button></div>` : ""}</section>`;
 }
 
 /* ================= «Сьогодні» ================= */
@@ -136,11 +183,16 @@ function today() {
     const st = checkState();
     checkCard = `<section class="card"><h3 class="ch">${esc(t("checkT"))}</h3>${st.due ? `<p>${esc(t("checkDue"))}</p><p><button class="btn small red" data-go="check">${esc(t("checkGo"))} →</button></p>` : st.ready ? `<p class="muted">${esc(t("checkNext")(st.left))}</p>` : `<p class="muted">${esc(t("checkFirst"))}</p>`}</section>`;
   }
-  const n = x.prep.items.length + (x.prep.text.trim() ? 1 : 0);
-  const prepCard = `<section class="card"><h3 class="ch">${esc(t("prepT"))}</h3><p class="muted">${esc(t("prepCount")(n))}${x.prep.date ? ` · ${esc(fmtDate(new Date(x.prep.date + "T12:00"), { day: "numeric", month: "long" }))}` : ""}</p><p><button class="btn small" data-go="prep">${esc(t("prepOpen"))} →</button></p></section>`;
+  const rs = resortState();
+  const resortCard = rs.due ? `<section class="card"><h3 class="ch">${esc(t("resortT"))}</h3><p>${esc(t("resortDue"))}</p><p><button class="btn small red" data-x="resort">${esc(ui.resortArm ? t("resortAsk") : t("resortGo"))}</button></p></section>` : "";
+  const recent = x.journal.slice().sort((a, b) => (a.d < b.d ? 1 : -1)).slice(0, 3);
+  const jCard = `<section class="card"><h3 class="ch">${esc(t("journal"))}</h3>
+    ${ui.composer && ui.composer.where === "journal" ? composer() : `<div class="tools"><button class="btn small" data-x="cmp" data-step="0" data-where="journal">${esc(t("jWrite"))}</button>${x.journal.length ? `<button class="btn small ghost" data-go="journal">${esc(t("jAll"))} →</button>` : ""}</div>`}
+    ${recent.length ? `<ul class="jlist">${recent.map(j => entryHtml(j, true).replace('<div class="jmeta"><span>', `<div class="jmeta"><span>${esc(fmtDate(new Date(j.d), { day: "numeric", month: "short" }))}, `)).join("")}</ul>` : `<p class="muted small">${esc(t("jEmptyToday"))}</p>`}</section>`;
   $("#view").innerHTML = `<div class="xhead"><p class="eyebrow">${esc(fmtDate(new Date(), { weekday: "long", day: "numeric", month: "long" }))}</p><h1>${esc(t("today"))}</h1></div>
     <section class="card hero-card">${focus}</section>
-    <div class="cards">${progress}${checkCard}${prepCard}</div>${A.foot()}`;
+    ${resortCard}${jCard}
+    <div class="cards">${progress}${checkCard}</div>${A.foot()}`;
 }
 function checkState() {
   const x = X(), last = x.checks.length ? x.checks[x.checks.length - 1].d : null;
@@ -156,7 +208,7 @@ function composer() {
   const sel = c.where === "journal" ? `<label class="fl">${esc(t("valueL"))}<select id="cmpVal"><option value="">${esc(t("noValue"))}</option>${my.map(v => `<option value="${esc(v.e)}" ${v.e === c.e ? "selected" : ""}>${esc(A.nm(v))}</option>`).join("")}</select></label>
      <label class="chk"><input type="checkbox" id="cmpStep" ${c.step ? "checked" : ""}> ${esc(t("isStep"))}</label>` : "";
   return `<div class="cmp">${sel}<textarea id="cmpText" placeholder="${esc(c.step && c.where !== "journal" ? t("howWasIt") : c.where === "journal" ? t("jPh") : t("thought"))}"></textarea>
-    <div class="tools"><button class="btn small primary" data-x="cmpsave">${esc(t("save"))}</button>${c.where === "journal" ? "" : `<button class="btn small ghost" data-x="cmpcancel">${esc(t("cancel"))}</button>`}</div></div>`;
+    <div class="tools"><button class="btn small primary" data-x="cmpsave">${esc(t("save"))}</button>${c.where === "journal" && A.view === "journal" ? "" : `<button class="btn small ghost" data-x="cmpcancel">${esc(t("cancel"))}</button>`}</div></div>`;
 }
 function saveEntry() {
   const c = ui.composer; if (!c) return;
@@ -166,7 +218,7 @@ function saveEntry() {
   if (!text.trim() && !step) { $("#cmpText") && $("#cmpText").focus(); return; }
   X().journal.push({ id: uid(), d: new Date().toISOString(), e, step, text: text.trim() });
   A.save(); P.haptic(step ? "success" : "light"); toast(t("saved"));
-  ui.composer = c.where === "journal" ? { where: "journal", e: X().focus, step: false } : null;
+  ui.composer = c.where === "journal" && A.view === "journal" ? { where: "journal", e: X().focus, step: false } : null;
   refresh(c.where);
 }
 function refresh(where) {
@@ -215,8 +267,7 @@ function mineExtra() {
     trend = `<section class="panel"><h2>${esc(t("trendT"))}</h2><p class="hint">${esc(t("trendHint"))}</p>${x.checks.length ? chart() : `<p class="empty" style="padding:6px 0">${esc(checkState().ready ? t("checkDue") : t("checkFirst"))}</p>`}
       <div class="tools"><button class="btn small ${checkState().due ? "red" : ""}" data-go="check">${esc(t("checkGo"))} →</button></div></section>`;
   }
-  const n = x.prep.items.length + (x.prep.text.trim() ? 1 : 0);
-  return `${trend}<section class="panel"><h2>${esc(t("prepT"))}</h2><p class="hint">${esc(t("prepCount")(n))}</p><div class="tools"><button class="btn small" data-go="prep">${esc(t("prepOpen"))} →</button></div></section>`;
+  return `${trend}${x.history.length || x.sortDone ? resortPanel() : ""}`;
 }
 function chart() {
   const x = X(), snaps = x.checks.slice(-12);
@@ -262,20 +313,23 @@ function saveCheck() {
 }
 
 /* ================= підготовка до сесії ================= */
-function prep() {
+function session() {
   const x = X(), p = x.prep, my = mineVals();
   const since = Date.now() - 14 * 864e5;
   const recent = x.journal.filter(j => Date.parse(j.d) >= since).sort((a, b) => (a.d < b.d ? 1 : -1));
   const rows = p.items.map(e => A.BY[e]).filter(Boolean).map(v => { const s = A.S(v.e); const sub = [s.imp != null && s.liv != null ? `${t("sumImp")} ${s.imp} · ${t("sumLiv")} ${s.liv}` : "", s.note ? s.note.slice(0, 80) : ""].filter(Boolean).join(" · ");
     return `<div class="row">${A.sign(v, "sg")}<button class="rn" data-detail="${esc(v.e)}"><b>${esc(A.nm(v))}</b><span>${esc(sub || A.other(v))}</span></button><button class="star" data-x="preprm" data-e="${esc(v.e)}" aria-label="${esc(t("prepToggleOff"))}">✕</button></div>`; }).join("");
   const add = my.filter(v => !p.items.includes(v.e));
-  $("#view").innerHTML = `<div class="xhead"><h1>${esc(t("prepT"))}</h1><p class="muted">${esc(t("prepP"))}</p></div>
+  $("#view").innerHTML = `<div class="xhead"><h1>${esc(t("sessionT"))}</h1><p class="muted">${esc(t("prepP"))}</p></div>
     <section class="panel"><label class="fl" for="prepDate">${esc(t("prepDate"))}</label><input type="date" id="prepDate" class="inp" value="${esc(p.date)}"></section>
     <section class="panel"><h2>${esc(t("prepVals"))}</h2>${rows ? `<div class="rows">${rows}</div>` : `<p class="muted">${esc(t("prepEmptyVals"))}</p>`}
       ${add.length ? `<p class="lbl" style="margin-top:14px">${esc(t("prepAdd"))}</p><div class="pickchips">${add.map(v => `<button class="pchip" data-x="prepadd" data-e="${esc(v.e)}">${A.sign(v, "csign")}${esc(A.nm(v))}</button>`).join("")}</div>` : ""}</section>
     <section class="panel"><h2>${esc(t("prepText"))}</h2><textarea id="prepText" class="ta" placeholder="${esc(t("prepTextPh"))}">${esc(p.text)}</textarea></section>
     <section class="panel"><h2>${esc(t("prepRecent"))}</h2>${recent.length ? `<ul class="jlist">${recent.map(j => entryHtml(j, true).replace('<div class="jmeta"><span>', `<div class="jmeta"><span>${esc(fmtDate(new Date(j.d), { day: "numeric", month: "short" }))}, `)).join("")}</ul>` : `<p class="muted">${esc(t("prepRecentEmpty"))}</p>`}</section>
     <div class="tools"><button class="btn primary" data-x="prepshare">${esc(t("prepShare"))}</button><button class="btn" data-x="pdf">${esc(t("prepPdf"))}</button><button class="btn ghost" data-x="prepdone">${esc(ui.prepArm ? t("prepDoneAsk") : t("prepDone"))}</button></div>
+    <section class="panel" style="margin-top:22px"><h2>${esc(t("sumT"))}</h2><p class="hint">${esc(t("sumHint"))}</p>
+      <pre class="summary" id="sum">${esc(A.summaryText())}</pre>
+      <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button></div></section>
     ${A.foot()}`;
 }
 function prepText() {
@@ -321,8 +375,7 @@ function backupPanel() {
     ${A.codePanel()}
     <p class="hint" style="margin-top:14px">${esc(t("backupFileHint"))}</p>
     <div class="tools"><button class="btn small ghost" data-x="bsave">${esc(t("backupSave"))}</button><label class="btn small ghost" for="bfile">${esc(t("backupLoad"))}</label><input type="file" id="bfile" class="vh" accept="application/json,.json,text/plain,.txt"><span class="note-ok" id="bmsg"></span></div>
-    <div id="bconfirm"></div>
-    <div class="tools"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div></section>`;
+    <div id="bconfirm"></div></section>`;
 }
 async function backupSave() {
   // усередині файлу — той самий код, що й у полі «Код»
@@ -378,10 +431,13 @@ function settings() {
      ${ui.pinForm ? pinForm : ""}
      ${lk.on && !ui.pinForm ? `${ui.bio.available ? sw("lockBio", lk.bio, t("lockBio")(ui.bio.type)) : ""}<div class="tools"><button class="btn small" data-x="pinchange">${esc(t("lockChange"))}</button></div>` : ""}</section>
    ${backupPanel().replace('<section class="panel">', '<section class="panel set">')}
+   <section class="panel set"><h2>${esc(t("tellB"))}</h2><p class="hint">${esc(t("tellHint"))}</p><div class="tools"><button class="btn small" data-share>${esc(t("tellB"))}</button></div></section>
    <section class="panel set"><h2>${esc(t("setAbout"))}</h2>
      <p class="kv"><span>${esc(t("version"))}</span><b>${esc(ui.ver || "1.0")}</b></p>
      <p class="kv"><span>${esc(t("contact"))}</span><b>nytka.ua@gmail.com</b></p>
-     <div class="tools"><button class="btn small" data-go="about">${esc(t("aboutL"))}</button><a class="btn small" href="privacy.html#${A.D.lang}">${esc(t("privacyL"))}</a><a class="btn small" href="support.html#${A.D.lang}">${esc(t("supportL"))}</a><a class="btn small" href="help.html#${A.D.lang}">${esc(t("helpL"))}</a></div></section>`;
+     <div class="tools"><button class="btn small" data-go="about">${esc(t("aboutL"))}</button><a class="btn small" href="privacy.html#${A.D.lang}">${esc(t("privacyL"))}</a><a class="btn small" href="support.html#${A.D.lang}">${esc(t("supportL"))}</a><a class="btn small" href="help.html#${A.D.lang}">${esc(t("helpL"))}</a></div></section>
+   <section class="panel set danger"><h2>${esc(t("dangerT"))}</h2><p class="hint">${esc(t("dangerHint"))}</p>
+     <div class="tools"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div></section>`;
 }
 async function savePin() {
   const a = ($("#pin1") || {}).value || "", b = ($("#pin2") || {}).value || "", m = $("#pinmsg");
@@ -482,7 +538,7 @@ function onClick(ev) {
   if (ev.target.closest("#wipe")) {
     ev.stopPropagation();
     if (!ui.wipeArm) { ui.wipeArm = true; $("#wipeMsg").textContent = t("wipeAsk"); setTimeout(() => { ui.wipeArm = false; const m = $("#wipeMsg"); if (m) m.textContent = ""; }, 3500); return; }
-    ui.wipeArm = false; A.D.st = {}; A.D.x = blankX(); A.sess.hist = []; A.save(); A.shell(); A.rerender(); P.haptic("medium"); return;
+    ui.wipeArm = false; ui.valMode = null; A.D.st = {}; A.D.x = blankX(); A.sess.hist = []; A.save(); A.shell(); A.rerender(); P.haptic("medium"); return;
   }
   const el = ev.target.closest("[data-x]"); if (!el) return;
   const x = X(), k = el.dataset.x;
@@ -498,12 +554,16 @@ function onClick(ev) {
     case "preprm": x.prep.items = x.prep.items.filter(e => e !== el.dataset.e); A.save(); A.rerender(); break;
     case "prepshare": P.shareText(prepText(), t("prepT")).then(r => r === "copied" && toast(t("copied"))); break;
     case "prepdone":
-      if (!ui.prepArm) { ui.prepArm = true; A.rerender(); setTimeout(() => { if (ui.prepArm) { ui.prepArm = false; if (A.view === "prep") A.rerender(); } }, 3500); break; }
+      if (!ui.prepArm) { ui.prepArm = true; A.rerender(); setTimeout(() => { if (ui.prepArm) { ui.prepArm = false; if (A.view === "session") A.rerender(); } }, 3500); break; }
       ui.prepArm = false; x.prep = { items: [], text: "", date: "" }; A.save(); toast(t("prepCleared")); A.rerender(); break;
     case "jdel":
       if (ui.del !== el.dataset.id) { ui.del = el.dataset.id; refresh(A.sess.openE ? "sheet" : A.view); setTimeout(() => { if (ui.del === el.dataset.id) ui.del = null; }, 3500); break; }
       x.journal = x.journal.filter(j => j.id !== el.dataset.id); ui.del = null; A.save(); refresh(A.sess.openE ? "sheet" : A.view); break;
     case "cksave": saveCheck(); break;
+    case "vmode": ui.valMode = el.dataset.m; A.rerender(); break;
+    case "resort":
+      if (!ui.resortArm) { ui.resortArm = true; A.rerender(); setTimeout(() => { if (ui.resortArm) { ui.resortArm = false; if (A.view === "today" || A.view === "mine") A.rerender(); } }, 4000); break; }
+      ui.resortArm = false; startResort(); toast(t("resortStarted")); break;
     case "pdf": makePdf(); break;
     case "bsave": backupSave(); break;
     case "bapply": { const b = ui.backup; if (!b) break; A.D = { ...A.D, ...b }; X(); A.save(); ui.backup = null; A.shell(); A.rerender(); toast(t("backupDone")); break; }

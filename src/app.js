@@ -18,7 +18,7 @@ uk:{brand:"Нитка",sort:"Сортування",lib:"Усі цінності"
  gq:["Коли я востаннє жив за цією цінністю?","Що мені заважає жити за нею більше?"],
  forMe:"Для мене",imp:"Наскільки це важливо для мене",liv:"Наскільки я зараз за цим живу",low:"зовсім ні",high:"дуже",
  noteL:"Що це значить для мене",exL:"Приклад з мого життя",notePh:"Своїми словами…",exPh:"Ситуація, де ця цінність проявилась або була порушена…",autosave:"Зберігається автоматично",trk:"Опрацьовано",trkN:{sc:"дві шкали",note:"що це значить для мене",ex:"приклад з життя"},worked:"опрацьовано",
- doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",shareB:"Поділитися «Ниткою»",shareMsg:"«Нитка» — простір для пошуку власних цінностей: 192 цінності з поясненнями. Безкоштовно і без реєстрації.",linkCopied:"Посилання скопійовано",shareHint:"Знаєш когось, кому це теж знадобиться?",
+ doneT:"Усі 192 цінності оцінені",doneP:"Тепер переходь до своїх: звузь до 12 і познач топ-5.",toMine:"До моїх цінностей",shareB:"Поділитися «Ниткою»",tellB:"Розповісти про «Нитку»",shareMsg:"«Нитка» — простір для пошуку власних цінностей: 192 цінності з поясненнями. Безкоштовно і без реєстрації.",linkCopied:"Посилання скопійовано",shareHint:"Знаєш когось, кому це теж знадобиться?",
  allT:"Усі цінності",search:"Пошук: свобода, freedom…",all:"Усі",nothing:"Нічого не знайдено.",
  mineT:"Мої цінності",mineP:"Тут збирається все, що ти позначив. Ціль — 12 цінностей у «Моє», з них 5 найголовніших.",
  mineList:"Моє",maybeList:"Можливо",over:"Більше 12. Порівняй схожі і переведи частину в «Можливо».",
@@ -49,7 +49,7 @@ en:{brand:"Nytka",sort:"Sort",lib:"All values",mine:"Mine",home:"Home",
  gq:["When did I last live by this value?","What stops me living by it more?"],
  forMe:"For me",imp:"How important this is to me",liv:"How much I live by it now",low:"not at all",high:"a lot",
  noteL:"What it means to me",exL:"An example from my life",notePh:"In your own words…",exPh:"A situation where this value showed up or was violated…",autosave:"Saved automatically",trk:"Worked through",trkN:{sc:"both scales",note:"what it means to me",ex:"example from life"},worked:"worked through",
- doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",shareB:"Share Nytka",shareMsg:"Nytka — a space to find your own values: 192 values with explanations. Free, no sign-up.",linkCopied:"Link copied",shareHint:"Know someone who might need this too?",
+ doneT:"All 192 values rated",doneP:"Now go to yours: narrow down to 12 and mark your top 5.",toMine:"Go to my values",shareB:"Share Nytka",tellB:"Tell someone about Nytka",shareMsg:"Nytka — a space to find your own values: 192 values with explanations. Free, no sign-up.",linkCopied:"Link copied",shareHint:"Know someone who might need this too?",
  allT:"All values",search:"Search: freedom, свобода…",all:"All",nothing:"Nothing found.",
  mineT:"My values",mineP:"Everything you've marked gathers here. The goal is 12 values in “Mine”, 5 of them the most important.",
  mineList:"Mine",maybeList:"Maybe",over:"More than 12. Compare similar ones and move some to “Maybe”.",
@@ -155,12 +155,13 @@ function shell(){
   $("#brand").innerHTML=sign({e:"Nytka",c:"freedom"},"",false)+esc(t("brand"));
   const base=[["sort",t("sort")],["lib",t("lib")],["mine",t("mine")]];
   const tabs=H.tabs?H.tabs(base):base;
-  $("#tabs").innerHTML=tabs.map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}>${esc(l)}</button>`).join("");
+  const cur=H.tabOf?H.tabOf(view):view;
+  $("#tabs").innerHTML=tabs.map(([k,l])=>`<button data-go="${k}" ${cur===k?'aria-current="page"':""}>${esc(l)}</button>`).join("");
   const c=counts();
-  $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${view===k?'aria-current="page"':""}${k==="mine"&&c[2]?` aria-label="${esc(l)}: ${c[2]}"`:""}>${k==="mine"?mineIcon(c[2]):IC[k]}<span>${esc(l)}</span></button>`).join("");
+  $("#bottom").innerHTML=(H.bottom?H.bottom(base):[["home",t("home")],...base]).map(([k,l])=>`<button data-go="${k}" ${cur===k?'aria-current="page"':""}${k==="mine"&&c[2]?` aria-label="${esc(l)}: ${c[2]}"`:""}>${k==="mine"?mineIcon(c[2]):IC[k]}<span>${esc(l)}</span></button>`).join("");
   $("#lUk").setAttribute("aria-pressed",String(D.lang==="uk"));$("#lEn").setAttribute("aria-pressed",String(D.lang==="en"));
 }
-function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
+function go(v,keepScroll){if(v==="home"&&H.home)v=H.home;if(H.route)v=H.route(v)||v;view=v;shell();document.documentElement.classList.toggle("about-mode",v==="about");(({home:home,sort:sort,lib:lib,mine:mine,about:about})[v]||H.views[v])();if(v!=="sort"&&H.afterRender)H.afterRender(v);if(!keepScroll)window.scrollTo(0,0)}
 function rerender(){go(view,true)}
 
 /* ---------- home ---------- */
@@ -196,6 +197,7 @@ function about(){
     ${t("aboutP").map(x=>`<p class="about-p">${esc(x)}</p>`).join("")}
     <p class="about-small">${esc(t("aboutSmall"))}</p>
     <button class="btn red about-go" data-about="go">${esc(started?t("aboutCont"):t("aboutGo"))} →</button>
+    <button class="link about-share" data-share>${esc(t("tellB"))}</button>
   </div>${aboutArt()}</section>`;
 }
 /* велике полотно для широкого екрана: знак «вишивається» від центру, а з останнього хрестика тягнеться нитка */
@@ -352,10 +354,10 @@ function mine(){
    <div class="gap">${gp.map(({v,i,l})=>`<div class="gp"><b>${esc(nm(v))}</b><div class="gscale"><span class="ln" style="left:${Math.min(i,l)*10}%;width:${Math.abs(i-l)*10}%"></span><span class="di" style="left:${i*10}%"></span><span class="dl" style="left:${l*10}%"></span></div><span class="num">${i-l>0?"−":i-l<0?"+":""}${Math.abs(i-l)}</span></div>`).join("")}
    <div class="gaxis"><span></span><div><span>0</span><span>5</span><span>10</span></div><span></span></div></div>`:`<p class="empty" style="padding:8px 0">${esc(t("gapEmpty"))}</p>`}
   </section>
-  ${H.mineExtra?H.mineExtra():""}<section class="panel"><h2>${esc(t("sumT"))}</h2><p class="hint">${esc(t("sumHint"))}</p>
+  ${H.mineExtra?H.mineExtra():""}${H.noSummary?"":`<section class="panel"><h2>${esc(t("sumT"))}</h2><p class="hint">${esc(t("sumHint"))}</p>
    <pre class="summary" id="sum">${esc(summary())}</pre>
-   <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}<button class="btn small" data-share>${esc(t("shareB"))}</button></div>
-  </section>
+   <div class="tools"><button class="btn small primary" id="copySum">${esc(t("copy"))}</button>${H.sumTools?H.sumTools():""}</div>
+  </section>`}
   ${H.backupPanel?H.backupPanel():`<section class="panel"><h2>${esc(t("backupT"))}</h2><p class="hint">${esc(t("backupHint"))}</p>
    ${codePanel()}
    <div class="tools wipe-row"><button class="btn small" id="wipe" style="border-color:var(--red);color:var(--red)">${esc(t("wipe"))}</button><span class="note-ok" id="wipeMsg"></span></div>
@@ -456,7 +458,7 @@ document.addEventListener("click",e=>{
   if(el.id==="exp"){if(el.dataset.ready)copyCode(el);else genCode(el);return}
   if(el.id==="impCode"){restoreCode();return}
   if(el.id==="wipe"){if(!sess.armed){sess.armed=true;$("#wipeMsg").textContent=t("wipeAsk");setTimeout(()=>{sess.armed=false;const m=$("#wipeMsg");if(m)m.textContent=""},3500);return}
-    sess.armed=false;D.st={};sess.hist=[];if(H.onWipe)H.onWipe();save();shell();mine();return}
+    sess.armed=false;D.st={};sess.hist=[];if(H.onWipe)H.onWipe();save();shell();rerender();return}
 });
 document.addEventListener("input",e=>{
   const el=e.target;
@@ -474,7 +476,7 @@ document.addEventListener("keydown",e=>{
   if(map[e.key]&&v){e.preventDefault();pick(v.e,map[e.key])}
 });
 H.views={};
-const API={codePanel,readCode,makeCode,T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
+const API={codePanel,sortView:sort,libView:lib,summaryText:summary,readCode,makeCode,T,IC,COL,V,BY,CL,TOTAL,KEY,get D(){return D},set D(x){D=x},S,setS,save,t,esc,nm,other,f,cName,cIntro,counts,sign,cells,
   go,rerender,shell,sess,$,openDetail,closeDetail,renderSheet,summary,work,workN,track,STITCH,pick,nextTodo,foot,copyText,get view(){return view}};
 function boot(){loadData();go(D.about?"home":"about")}
 if(NX){NX.attach(API,H);Promise.resolve(NX.ready).then(boot)}else boot();
