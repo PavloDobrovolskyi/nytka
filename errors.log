@@ -1,0 +1,8 @@
+59:Note: Some input files use unchecked or unsafe operations.
+60:Note: Recompile with -Xlint:unchecked for details.
+61-
+62-> Task :app:preBuild UP-TO-DATE
+63-> Task :app:preDebugBuild UP-TO-DATE
+64-> Task :aparajita-capacitor-biometric-auth:writeDebugAarMetadata
+65-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+66-> Task :app:javaPreCompileDebug
