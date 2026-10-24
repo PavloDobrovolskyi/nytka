@@ -146,3 +146,7 @@ html.locked header,html.locked main,html.locked nav.bottom{visibility:hidden}
 /* «Небезпечна зона» в самому низу налаштувань */
 .panel.set.danger{margin-top:36px;border-color:color-mix(in srgb,var(--red) 35%,var(--line))}
 .panel.set.danger h2{color:var(--red)}
+
+/* мова — лише в налаштуваннях, у шапці її немає */
+.is-app .top .lang{display:none}
+.cards.one{grid-template-columns:1fr}

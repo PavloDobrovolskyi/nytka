@@ -191,8 +191,7 @@ function today() {
     ${recent.length ? `<ul class="jlist">${recent.map(j => entryHtml(j, true).replace('<div class="jmeta"><span>', `<div class="jmeta"><span>${esc(fmtDate(new Date(j.d), { day: "numeric", month: "short" }))}, `)).join("")}</ul>` : `<p class="muted small">${esc(t("jEmptyToday"))}</p>`}</section>`;
   $("#view").innerHTML = `<div class="xhead"><p class="eyebrow">${esc(fmtDate(new Date(), { weekday: "long", day: "numeric", month: "long" }))}</p><h1>${esc(t("today"))}</h1></div>
     <section class="card hero-card">${focus}</section>
-    ${resortCard}${jCard}
-    <div class="cards">${progress}${checkCard}</div>${A.foot()}`;
+    <div class="cards one">${resortCard}${progress}${jCard}${checkCard}</div>${A.foot()}`;
 }
 function checkState() {
   const x = X(), last = x.checks.length ? x.checks[x.checks.length - 1].d : null;
